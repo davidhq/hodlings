@@ -1,6 +1,6 @@
 {
   "name": "crytrac",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "bin": "index.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "commander": "^2.9.0",
     "homedir": "^0.6.0",
     "livescript": "^1.5.0",
+    "moment": "^2.18.1",
     "prelude-ls": "^1.1.2",
     "rest": "^2.0.0",
     "table": "^4.0.1",

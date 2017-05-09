@@ -1,4 +1,4 @@
-require! <[ rest homedir chalk commander timespan ]>
+require! <[ rest homedir chalk commander timespan moment ]>
 require! 'prelude-ls' : { map, filter, reject, each, group-by, sort-by, reverse, sum, split, take, join, lines, Obj, Str }
 require! table : { table, getBorderCharacters }
 require! 'fs' : { readFileSync }
@@ -6,6 +6,7 @@ client = rest.wrap require('rest/interceptor/mime')
 
 _ =
   header: chalk.white.bold.underline
+  date: chalk.white.dim
   symbol: chalk.white
   value: chalk.yellow
   up: chalk.green
@@ -90,7 +91,10 @@ function get-latest(hodlings, cb)
   if args.value-only then
     data = data |> map take 2
   else
-    data.unshift (["" \Value \1H% \24H% \Count] |> map _.header)
+    now = moment!.format(\LTS)
+    headers = [\Value, \1H%, \24H%, \Count] |> map _.header
+      ..unshift(_.date(now))
+    data.unshift headers
 
   data = data |> map take 4 unless args.show-count
 
