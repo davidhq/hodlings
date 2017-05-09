@@ -1,0 +1,5 @@
+*.tgz
+*.swp
+.git
+.gitignore
+.gitattributes
