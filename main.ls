@@ -14,7 +14,8 @@ _ =
 args = commander
   .option "-w, --watch" "refresh data periodically"
   .option "-s, --symbol" "use symbol instead of full name"
-  .option "-v, --value-only" "don't display gain/loss columns"
+  .option "-v, --value-only" "only display value"
+  .option "-c, --show-count" "show amount of each coin"
   .option "--no-color" "don't display colors"
   .parse process.argv
 
@@ -70,6 +71,7 @@ function get-latest(hodlings, cb)
         * _.value("$" + value.toFixed(2))
         * deltaStyle1h(parseFloat(currency.percent_change_1h).toFixed(2) + "%")
         * deltaStyle24h(parseFloat(currency.percent_change_24h).toFixed(2) + "%")
+        * _.symbol(amount.toFixed(3))
       value: value
       symbol: symbol
       amount: amount
@@ -81,13 +83,16 @@ function get-latest(hodlings, cb)
     |> sort-by (.value)
     |> reverse
 
+  grand-total = (details |> map (.value) |> sum |> (.toFixed(2)))
   data = (details |> map (.message))
-   ..push [_.symbol.bold(\Total:), _.value.bold("$" + (details |> map (.value) |> sum |> (.toFixed(2)))), '', '']
+   ..push [_.symbol.bold(\Total:), _.value.bold("$" + grand-total), '', '', '']
 
   if args.value-only then
     data = data |> map take 2
   else
-    data.unshift (["" \Value \1H% \24H%] |> map _.header)
+    data.unshift (["" \Value \1H% \24H% \Count] |> map _.header)
+
+  data = data |> map take 4 unless args.show-count
 
   cb table data, do
     border: getBorderCharacters \void
