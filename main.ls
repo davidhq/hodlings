@@ -19,42 +19,41 @@ args = commander
   .parse process.argv
 
 
-hodlings = readFileSync homedir! + '/.hodlings', \utf8
-         |> Str.lines
-         |> map split "#" |> map (.0) # remove comments
-         |> map split ":"
-         |> map map (.trim!)
-         |> filter (.1?)
-         |> group-by (.0)
-         |> Obj.map -> it |> map (.1) |> map parseFloat
-         |> Obj.map sum
-         |> Obj.obj-to-pairs
-         |> map ->
-            symbol: it.0
-            amount: it.1
+get-hodlings = ->
+ readFileSync homedir! + '/.hodlings', \utf8
+ |> Str.lines
+ |> map split "#" |> map (.0) # remove comments
+ |> map split ":"
+ |> map map (.trim!)
+ |> filter (.1?)
+ |> group-by (.0)
+ |> Obj.map -> it |> map (.1) |> map parseFloat
+ |> Obj.map sum
+ |> Obj.obj-to-pairs
+ |> map ->
+    symbol: it.0
+    amount: it.1
 
+execute = (cb = console.log) -> get-latest get-hodlings!, cb
 
 if args.watch
   display = require(\charm)(process)
-    .push!
     .cursor false
-    .remove-all-listeners \^C
-    .on \^C ->
-      display.cursor true
-      process.exit!
 
+  process.on \exit -> display.cursor true
+
+  (x, y) <- display.position
   display-latest-values = ->
-    display.pop!
-    display.push!
-    get-latest console.log
+    display.position(x, y).write \...
+    execute -> display.position(x, y).erase(\down).write(it)
   display-latest-values!
 
   interval = timespan.from-seconds(90).total-milliseconds!
   setInterval display-latest-values, interval
 else
-  get-latest console.log
+  execute!
 
-function get-latest(cb)
+function get-latest(hodlings, cb)
   response <- client({path: 'https://api.coinmarketcap.com/v1/ticker/'}).then
   currencies = {[..symbol, ..] for response.entity}
 
