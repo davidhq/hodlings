@@ -50,11 +50,13 @@ if args.watch
     .cursor false
 
   process.on \exit -> display.cursor true
+  last-rows = 0
 
-  (x, y) <- display.position
   display-latest-values = ->
-    display.position(x, y).write \...
-    execute -> display.position(x, y).erase(\down).write(it)
+    display.up(last-rows - 1).cursor(true) if last-rows
+    execute ->
+      display.erase(\down).write(it).cursor(false)
+      last-rows := it |> Str.lines |> (.length)
   display-latest-values!
 
   interval = timespan.from-seconds(90).total-milliseconds!
