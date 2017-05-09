@@ -117,7 +117,9 @@ function get-latest(hodlings, cb)
 
     get-details = ({ symbol, amount }) ->
       currency = currencies[symbol]
-      return unless currency?
+      unless currency? then
+        console.error "Unknown coin: #{symbol}"
+        return
       fx = args.convert.toLowerCase!
       value = (currency["price_#{fx}"] * amount)
       deltaStyle1h = if currency.percent_change_1h > 0 then _.up else _.down
@@ -139,6 +141,7 @@ function get-latest(hodlings, cb)
     details =
       hodlings
       |> map get-details
+      |> filter (?)
       |> sort-by (.value)
       |> reverse
 
