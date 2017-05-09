@@ -1,11 +1,13 @@
 require! <[ rest homedir chalk ]>
 require! 'prelude-ls' : { map, filter, reject, each, group-by, sort-by, reverse, sum, split, join, lines, Obj, Str }
+require! table : { table, getBorderCharacters }
 require! 'fs' : { readFileSync }
 client = rest.wrap require('rest/interceptor/mime')
 
 _ =
-  symbol: chalk.white.bold
-  value: chalk.white
+  header: chalk.white.bold
+  symbol: chalk.white
+  value: chalk.yellow
   up: chalk.green
   down: chalk.red
 
@@ -26,14 +28,19 @@ hodlings = readFileSync homedir! + '/.hodlings', \utf8
 response <- client({path: 'https://api.coinmarketcap.com/v1/ticker/'}).then
 currencies = {[..symbol, ..] for response.entity}
 
-get-value = (currency, amount) -> (currency.price_usd * amount)
 get-details = ({ symbol, amount }) ->
   currency = currencies[symbol]
   return unless currency?
-  value = get-value currency, amount
-  deltaStyle = if currency.percent_change_24h > 0 then _.up else _.down
+  value = (currency.price_usd * amount)
+  deltaStyle1h = if currency.percent_change_1 > 0 then _.up else _.down
+  deltaStyle24h = if currency.percent_change_24h > 0 then _.up else _.down
+
   return
-    message: _.symbol(symbol) + ": \t" + _.value("$" + value.toFixed(2)) + " " + deltaStyle(currency.percent_change_24h + "%")
+    message:
+      * _.symbol(currency.name)
+      * _.value("$" + value.toFixed(2))
+      * deltaStyle1h(currency.percent_change_1h + "%")
+      * deltaStyle24h(currency.percent_change_24h + "%")
     value: value
     symbol: symbol
     amount: amount
@@ -42,14 +49,19 @@ get-details = ({ symbol, amount }) ->
 details =
   hodlings
   |> map get-details
-
-details
   |> sort-by (.value)
   |> reverse
-  |> map (.message)
-  |> each console.log
 
-details
-  |> map (.value)
-  |> sum
-  |> -> console.log _.symbol("TOTAL") + ": \t" + _.value("$" + it.toFixed(2))
+data = (details |> map (.message))
+ ..unshift (<[ Coin Value 1H% 24H% ]> |> map _.header)
+ ..push [_.symbol(\Total:), _.value("$" + (details |> map (.value) |> sum |> (.toFixed(2)))), '', '']
+
+console.log table data, do
+  border: getBorderCharacters \void
+  drawHorizontalLine: (index, size) -> index == size - 1
+  columnDefault:
+    alignment: \right
+    paddingLeft: 0
+    paddingRight: 2
+  columns:
+    0: alignment: \left
