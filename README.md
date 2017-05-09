@@ -10,13 +10,15 @@ DOGE: 1337 # so crypto
 ```
 
 Sample output:
-```
-             Value    1H%    24H%
-Ethereum  $2679.88  4.13%  -7.08%
-Bitcoin    $256.13  0.94%   7.53%
-Dogecoin     $1.74   4.0%  -7.68%
 
-Total:    $2937.75
+![Sample Output](output.png)
+
+```
+             Value     1H%     24H%
+Ethereum  $2694.54   4.18%   -6.77%
+Bitcoin    $258.75  -1.08%    9.04%
+Dogecoin     $1.61   6.14%  -13.82%
+Total:    $2954.90
 ```
 
 Options:
