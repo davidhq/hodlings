@@ -31,5 +31,7 @@ Options:
     -w, --watch       refresh data periodically
     -s, --symbol      use symbol instead of full name
     -v, --value-only  don't display gain/loss columns
+    -c, --show-count  show amount of each coin
+    -f, --file <f>    file to use for holdings [~/.hodlings]
     --no-color        don't display colors
 ```
