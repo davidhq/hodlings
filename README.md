@@ -11,7 +11,7 @@ DOGE: 1337 # so crypto
 
 Sample output:
 
-![Sample Output](https://github.com/Talljoe/crytrac/blob/master/output.png)
+![Sample Output](https://github.com/Talljoe/crytrac/blob/master/output.png?raw=true)
 
 ```
              Value     1H%     24H%
