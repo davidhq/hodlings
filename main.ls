@@ -1,5 +1,5 @@
 require! <[ rest homedir chalk commander timespan ]>
-require! 'prelude-ls' : { map, filter, reject, each, group-by, sort-by, reverse, sum, split, join, lines, Obj, Str }
+require! 'prelude-ls' : { map, filter, reject, each, group-by, sort-by, reverse, sum, split, take, join, lines, Obj, Str }
 require! table : { table, getBorderCharacters }
 require! 'fs' : { readFileSync }
 client = rest.wrap require('rest/interceptor/mime')
@@ -12,8 +12,12 @@ _ =
   down: chalk.red
 
 args = commander
-  .option "-w, --watch" "Watch"
+  .option "-w, --watch" "refresh data periodically"
+  .option "-s, --symbol" "use symbol instead of full name"
+  .option "-v, --value-only" "don't display gain/loss columns"
+  .option "--no-color" "don't display colors"
   .parse process.argv
+
 
 hodlings = readFileSync homedir! + '/.hodlings', \utf8
          |> Str.lines
@@ -45,7 +49,7 @@ if args.watch
     get-latest console.log
   display-latest-values!
 
-  interval = timespan.from-minutes(5).total-milliseconds!
+  interval = timespan.from-seconds(90).total-milliseconds!
   setInterval display-latest-values, interval
 else
   get-latest console.log
@@ -63,7 +67,7 @@ function get-latest(cb)
 
     return
       message:
-        * _.symbol(currency.name)
+        * _.symbol(if args.short then currency.symbol else currency.name)
         * _.value("$" + value.toFixed(2))
         * deltaStyle1h(parseFloat(currency.percent_change_1h).toFixed(2) + "%")
         * deltaStyle24h(parseFloat(currency.percent_change_24h).toFixed(2) + "%")
@@ -79,12 +83,16 @@ function get-latest(cb)
     |> reverse
 
   data = (details |> map (.message))
-   ..unshift (<[ Coin Value 1H% 24H% ]> |> map _.header)
-   ..push [_.symbol(\Total:), _.value("$" + (details |> map (.value) |> sum |> (.toFixed(2)))), '', '']
+   ..push [_.symbol.bold(\Total:), _.value.bold("$" + (details |> map (.value) |> sum |> (.toFixed(2)))), '', '']
+
+  if args.value-only then
+    data = data |> map take 2
+  else
+    data.unshift (["" \Value \1H% \24H%] |> map _.header)
 
   cb table data, do
     border: getBorderCharacters \void
-    drawHorizontalLine: (index, size) -> index == size - 1
+    drawHorizontalLine: ->
     columnDefault:
       alignment: \right
       paddingLeft: 0
