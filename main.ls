@@ -68,7 +68,7 @@ function get-latest(hodlings, cb)
 
     return
       message:
-        * _.symbol(if args.short then currency.symbol else currency.name)
+        * _.symbol(if args.symbol then currency.symbol else currency.name)
         * _.value("$" + value.toFixed(2))
         * deltaStyle1h(parseFloat(currency.percent_change_1h).toFixed(2) + "%")
         * deltaStyle24h(parseFloat(currency.percent_change_24h).toFixed(2) + "%")
@@ -91,7 +91,7 @@ function get-latest(hodlings, cb)
   if args.value-only then
     data = data |> map take 2
   else
-    now = moment!.format(\LTS)
+    now = moment!.format(if args.symbol then "HH:MM" else \LTS)
     headers = [\Value, \1H%, \24H%, \Count] |> map _.header
       ..unshift(_.date(now))
     data.unshift headers
