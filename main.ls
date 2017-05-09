@@ -100,7 +100,7 @@ function get-latest(hodlings, cb)
     if args.value-only then
       data = data |> map take 2
     else
-      now = moment!.format(if args.symbol then "HH:MM" else \LTS)
+      now = moment!.format(if args.symbol then "HH:mm" else \LTS)
       headers = [\Value, \1H%, \24H%, \Count] |> map _.header
         ..unshift(_.date(now))
       data.unshift headers
