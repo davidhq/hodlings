@@ -33,5 +33,9 @@ Options:
     -v, --value-only  don't display gain/loss columns
     -c, --show-count  show amount of each coin
     -f, --file <f>    file to use for holdings [~/.hodlings]
+    -x, --convert <currency>  currency to display
+    --locale <locale>         locale to use for formatting
+    --supported-currencies    shows list of supported currencies
+    --supported-locales       shows list of supported locales
     --no-color        don't display colors
 ```
