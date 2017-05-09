@@ -5,7 +5,7 @@ require! 'fs' : { readFileSync }
 client = rest.wrap require('rest/interceptor/mime')
 
 _ =
-  header: chalk.white.bold
+  header: chalk.white.bold.underline
   symbol: chalk.white
   value: chalk.yellow
   up: chalk.green
