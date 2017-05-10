@@ -18,8 +18,7 @@ locale-checker = (arg) ->
 
 export
   current: current-locale
-
-  check: locale-checker
+  set: -> current-locale := locale-checker it
 
   get-supported: memoize ->
     cldr-data.available-locales
@@ -27,7 +26,8 @@ export
     |> obj-to-pairs
     |> map -> "#{it.0}: #{it.1 |> join ', '}"
 
-  get-formatters: (locale, currency, short-form) ->
+  get-formatters: (currency, short-form) ->
+    locale = current-locale
     globalize.load cldr-data.entire-main-for(locale), cldr-data.entire-supplemental!
 
     globalize-locale = globalize(locale)
