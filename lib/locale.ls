@@ -1,6 +1,8 @@
 require! <[ globalize cldr-data ]>
-require! 'prelude-ls' : { Func, head, group-by, obj-to-pairs, map, filter, join }
+require! 'prelude-ls' : { Func, head, tail, group-by, obj-to-pairs, map, filter, join }
 memoize = Func.memoize
+
+globalize.load cldr-data.entire-supplemental!
 
 get-locale-with-fallback = (locale) ->
   cldr-data.available-locales
@@ -8,6 +10,7 @@ get-locale-with-fallback = (locale) ->
   |> head
 
 current-locale = (process.env.LANG?split(\.)?0?replace(\_, \-) ? \en) |> get-locale-with-fallback
+globalize.load cldr-data.entire-main-for(current-locale)
 
 locale-checker = (arg) ->
   locale = get-locale-with-fallback arg
@@ -18,19 +21,20 @@ locale-checker = (arg) ->
 
 export
   current: current-locale
-  set: -> current-locale := locale-checker it
+  set: ->
+    current-locale := locale-checker it
+    globalize.load cldr-data.entire-main-for(current-locale)
 
   get-supported: memoize ->
     cldr-data.available-locales
-    |> group-by -> it.split(\-).0
+    |> group-by -> it.split(\-) |> head
     |> obj-to-pairs
-    |> map -> "#{it.0}: #{it.1 |> join ', '}"
+    |> map -> "#{head it}: #{it |> tail |> join ', '}"
+
+  get-parser: -> globalize(current-locale).number-parser!
 
   get-formatters: (currency, short-form) ->
-    locale = current-locale
-    globalize.load cldr-data.entire-main-for(locale), cldr-data.entire-supplemental!
-
-    globalize-locale = globalize(locale)
+    globalize-locale = globalize(current-locale)
 
     time-format =
       | short-form => skeleton: \Hm
@@ -46,3 +50,4 @@ export
         maximum-fraction-digits: 2
         minimum-fraction-digits: 2
       time: globalize-locale.date-formatter time-format
+      parser: globalize-locale.number-parser!
