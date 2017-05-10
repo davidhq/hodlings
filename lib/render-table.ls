@@ -1,4 +1,4 @@
-require! <[ chalk moment ]>
+require! <[ chalk ]>
 require! <[ ./locale ]>
 require! 'prelude-ls' : { flip, map, sum, take, sort-by, reverse }
 require! table : { table, getBorderCharacters }
@@ -45,7 +45,6 @@ export class TableRenderer
     if @options.value-only then
       data = data |> map take 2
     else
-      now = moment!.format(if @options.symbol then "HH:mm" else \LTS)
       headers = [\Value, \1H%, \24H%, \Count] |> map style.header
         ..unshift(style.date(new Date! |> @formatters.time))
       data.unshift headers
