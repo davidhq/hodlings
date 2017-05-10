@@ -1,5 +1,5 @@
 require! <[ globalize cldr-data ]>
-require! 'prelude-ls' : { Func, head, tail, group-by, obj-to-pairs, map, filter, join }
+require! 'prelude-ls' : { Func, head, tail, group-by, obj-to-pairs, map, filter, join, id }
 memoize = Func.memoize
 
 globalize.load cldr-data.entire-supplemental!
@@ -50,4 +50,5 @@ export
         maximum-fraction-digits: 2
         minimum-fraction-digits: 2
       time: globalize-locale.date-formatter time-format
+      default: id
       parser: globalize-locale.number-parser!

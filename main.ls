@@ -1,20 +1,34 @@
 require! <[ rest homedir commander timespan ]>
-require! 'prelude-ls' : { map, filter, lines, each }
+require! 'prelude-ls' : { map, filter, lines, each, split, partition, join, keys }
 client = rest.wrap require('rest/interceptor/mime')
              .wrap require('rest/interceptor/errorCode')
              .wrap require('rest/interceptor/retry', ), initial: timespan.from-seconds(5).total-milliseconds!
              .wrap require('rest/interceptor/timeout'), timeout: timespan.from-seconds(80).total-milliseconds!
 
 require! <[ ./lib/locale ./lib/portfolio ]>
-require! './lib/render-table' : { TableRenderer }
+require! './lib/render-table' : { TableRenderer, available-columns }
+
+parse-column-argument = (arg) ->
+  [args, bad-args] =
+    arg
+    |> split \,
+    |> map (.toLowerCase!)
+    |> partition -> it of available-columns
+
+  if bad-args.length then
+    bad-args |> each -> console.error "Unknown column name: #{it}"
+    process.exit -1
+  return args
 
 options = commander
   .option "-w, --watch" "refresh data periodically"
   .option "-s, --symbol" "use symbol instead of full name"
-  .option "-v, --value-only" "only display value"
-  .option "-c, --show-count" "show amount of each coin"
+  .option "-v, --value-only" "only display value (deprecated)"
+  .option "-c, --show-count" "show amount of each coin (deprecated)"
   .option "-f, --file <f>" "file to use for holdings [~/.hodlings]" (homedir! + '/.hodlings')
   .option "-x, --convert <currency>" "currency to display", /^AUD|BRL|CAD|CHF|CNY|EUR|GBP|HKD|IDR|INR|JPY|KRW|MXN|RUB$/i, "USD"
+  .option "--hide-header" "don't display table header"
+  .option "--columns <columns>" "columns to display [name,value,1-hour-change,24-hour-change]", parse-column-argument, []
   .option "--locale <locale>" "locale to use for formatting [#{locale.current}]", locale.set, locale.current
   .option "--supported-currencies" "shows list of supported currencies" ->
     console.log """
@@ -25,8 +39,16 @@ options = commander
     console.log  "Supported locales:"
     locale.get-supported! |> each console.log
     process.exit 0
+  .option "--available-columns" "shows list of columns" ->
+    console.log  "Supported columns:"
+    available-columns |> keys |> join ", " |> console.log
+    process.exit 0
   .option "--no-color" "don't display colors"
   .parse process.argv
+
+if options.columns?length and options.value-only
+  console.error "Incompatible options: --columns and --value-only"
+  process.exit
 
 portfolio.ensure-exists options.file
 
@@ -64,14 +86,21 @@ function get-latest(hodlings, cb)
         console.error "Unknown coin: #{symbol}"
         return
 
-      amount-for-currency = -> (currency["price_#{it.toLowerCase!}"] * amount)
-      value = amount-for-currency options.convert
-      value-btc = amount-for-currency \BTC
+      fx = options.convert.toLowerCase!
+      price = currency["price_#{fx}"] |> parseFloat
+      price-btc = currency.price_btc |> parseFloat
+      amount-for-currency = (*) amount
+      value = amount-for-currency price
+      value-btc = amount-for-currency price-btc
       return
+        count: amount
         value: value
         value-btc: value-btc
+        price: price
+        price-btc: price-btc
         symbol: symbol
         amount: amount
+        market-cap: currency["market_cap_#{fx}"] |> parseFloat
         currency: currency
 
     hodlings

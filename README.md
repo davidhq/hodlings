@@ -37,21 +37,24 @@ Total:    $2954.90
 
 ## Options
 ```
-  Usage: node index [options]
+  Usage: crytrac [options]
 
   Options:
 
-    -h, --help        output usage information
-    -w, --watch       refresh data periodically
-    -s, --symbol      use symbol instead of full name
-    -v, --value-only  don't display gain/loss columns
-    -c, --show-count  show amount of each coin
-    -f, --file <f>    file to use for holdings [~/.hodlings]
+    -h, --help                output usage information
+    -w, --watch               refresh data periodically
+    -s, --symbol              use symbol instead of full name
+    -v, --value-only          only display value (deprecated)
+    -c, --show-count          show amount of each coin (deprecated)
+    -f, --file <f>            file to use for holdings [~/.hodlings]
     -x, --convert <currency>  currency to display
-    --locale <locale>         locale to use for formatting
+    --hide-header             don't display table header
+    --columns <columns>       columns to display [name,value,1-hour-change,24-hour-change]
+    --locale <locale>         locale to use for formatting [en]
     --supported-currencies    shows list of supported currencies
     --supported-locales       shows list of supported locales
-    --no-color        don't display colors
+    --available-columns       shows list of columns
+    --no-color                don't display colors
 ```
 
 ## Tip

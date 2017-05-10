@@ -1,6 +1,6 @@
 require! <[ chalk ]>
 require! <[ ./locale ]>
-require! 'prelude-ls' : { flip, map, sum, take, sort-by, reverse }
+require! 'prelude-ls' : { flip, map, sum, take, sort-by, reverse, each }
 require! table : { table, getBorderCharacters }
 
 generate-table = (flip table) do
@@ -16,40 +16,107 @@ generate-table = (flip table) do
 style =
   header: chalk.white.bold.underline
   date: chalk.white.dim
-  symbol: chalk.white
-  value: chalk.yellow
-  up: chalk.green
-  down: chalk.red
+  total-label: chalk.white.bold
+  total-value: chalk.yellow.bold
 
+up-down-style = (value, formatted) -->
+  | value > 0 => chalk.green formatted
+  | value < 0 => chalk.red formatted
+  | otherwise => chalk.white formatted
+
+available-columns =
+  symbol:
+    display: ''
+    style: chalk.white
+    contents: (.symbol)
+  name:
+    display: ''
+    style: chalk.white
+    contents: (.currency.name)
+  value:
+    display: \Value
+    style: chalk.yellow
+    contents: (.value)
+    formatter: \currency
+  "value-btc":
+    display: 'Value (BTC)'
+    style: chalk.yellow
+    contents: (.value-btc)
+    formatter: \number
+  "1-hour-change":
+    display: \1H%
+    conditional-style: up-down-style
+    contents: -> parseFloat(it.currency.percent_change_1h) / 100
+    formatter: \percent
+  "24-hour-change":
+    display: \24H%
+    conditional-style: up-down-style
+    contents: -> parseFloat(it.currency.percent_change_24h) / 100
+    formatter: \percent
+  count:
+    display: \Count
+    style: chalk.white.dim
+    contents: (.count)
+    formatter: \number
+  price:
+    display: \Price
+    style: chalk.yellow
+    contents: (.price)
+    formatter: \currency
+  "price-btc":
+    display: 'Price (BTC)'
+    style: chalk.yellow
+    contents: (.price-btc)
+    formatter: \number
+  "market-cap":
+    display: 'Mkt Cap'
+    style: chalk.magenta
+    contents: (.market-cap)
+    formatter: \currency
+
+export available-columns
 export class TableRenderer
   (@options) ->
-    @formatters = locale.get-formatters @options.convert, @options.symbol
+    @formatters = locale.get-formatters @options.convert, (@options.columns?0 is \symbol)
+
+    @options.columns =
+      | @options.columns?.length => @options.columns
+      | @options.value-only => <[ symbol value ]>
+      | otherwise => <[ symbol value 1-hour-change 24-hour-change ]>
+
+    if @options.symbol
+      @options.columns = @options.columns |> map -> switch it | \name => \symbol | otherwise => it
+
+    if @options.show-count
+      @options.columns.push \count unless \count in @options.columns
 
   format: (details) ~>
-    get-columns = ({ currency, value, amount, symbol }) ~>
-      deltaStyle1h = if currency.percent_change_1h > 0 then style.up else style.down
-      deltaStyle24h = if currency.percent_change_24h > 0 then style.up else style.down
+    column-data = @options.columns
+    |> map ~> available-columns[it]
+    data = details |> map (detail) ~>
+      column-data |> map ~>
+        value = detail |> it.contents
 
-      percent-parse = -> it |> parseFloat |> -> it / 100
-      return
-        * style.symbol(if @options.symbol then currency.symbol else currency.name)
-        * style.value(value |> @formatters.currency)
-        * deltaStyle1h(currency.percent_change_1h |> percent-parse |> @formatters.percent)
-        * deltaStyle24h(currency.percent_change_24h |> percent-parse |> @formatters.percent)
-        * style.symbol(amount |> @formatters.number)
+        style =
+          | it.style? => that
+          | it.conditional-style? => value |> that
+          | otherwise => id
+
+        value
+          |> @formatters[it.formatter ? 'default']
+          |> style
 
     grand-total = (details |> map (.value) |> sum |> @formatters.currency)
-    data = (details |> map get-columns)
-     ..push [style.symbol.bold(\Total:), style.value.bold(grand-total), '', '', '']
+    footer = [''] * @options.columns.length
+      ..0 = style.total-label(\Total:)
+      ..1 = style.total-value(grand-total)
+    data.push footer
 
-    if @options.value-only then
-      data = data |> map take 2
-    else
-      headers = [\Value, \1H%, \24H%, \Count] |> map style.header
-        ..unshift(style.date(new Date! |> @formatters.time))
+    unless @options.value-only or @options.hide-header
+      headers = (column-data |> map (.display)) |> map style.header
+        ..0 = style.date(new Date! |> @formatters.time)
       data.unshift headers
 
-    data = data |> map take 4 unless @options.show-count
     return data
 
   render: (data, cb) ~>
