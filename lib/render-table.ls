@@ -22,7 +22,7 @@ style =
 up-down-style = (value, formatted) -->
   | value > 0 => chalk.green formatted
   | value < 0 => chalk.red formatted
-  | otherwise => chalk.white formatted
+  | otherwise => chalk.white.dim formatted
 
 available-columns =
   symbol:
