@@ -1,7 +1,17 @@
 # crytrac
 Display value of crypto-currency holdings. Prices fetched from [CryptoCurrency Market Capitalizations](https://api.coinmarketcap.com/v1/ticker/).
 
-Example `~/.hodlings`:
+## Install
+
+``sudo npm install -g crytrac``
+
+## Configure
+
+Create the file `~/.hodlings` containing your portfolio. You can
+have the same currency on more than one line, all values are summed
+together. Use `#` to put in comments.
+
+### Example
 ```
 # Main Hodlings
 BTC: 0.143
@@ -9,7 +19,11 @@ ETH: 31
 DOGE: 1337 # so crypto
 ```
 
-Sample output:
+## Run
+
+``crytrac``
+
+### Sample output:
 
 ![Sample Output](https://github.com/Talljoe/crytrac/blob/master/output.png?raw=true)
 
@@ -21,7 +35,7 @@ Dogecoin     $1.61   6.14%  -13.82%
 Total:    $2954.90
 ```
 
-Options:
+## Options
 ```
   Usage: node index [options]
 
@@ -39,3 +53,9 @@ Options:
     --supported-locales       shows list of supported locales
     --no-color        don't display colors
 ```
+
+## Tip
+
+* ETH: ``0x93b71c472f1C2fb95EE3F6c1c3eA46aCC730A23e``
+* DASH: ``XgeBMNGJYzKB1kTkNQEM6GDg8oxNQvwmL3``
+* BTC: ``176DTiuLzVLCvTQD1HTpBRKNgM25TvLTxi``
