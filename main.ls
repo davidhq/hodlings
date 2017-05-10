@@ -61,7 +61,7 @@ unless fs.existsSync args.file
 globalize.load cldr-data.entire-main-for(args.locale), cldr-data.entire-supplemental!
 
 globalize-locale = globalize(args.locale)
-currency-formatter = globalize-locale.currency-formatter(args.convert)
+currency-formatter = globalize-locale.currency-formatter(args.convert, use-grouping: true)
 number-formatter = globalize-locale.number-formatter do
   maximum-fraction-digits: 4
   minimum-fraction-digits: 0

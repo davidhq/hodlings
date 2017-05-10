@@ -1,6 +1,6 @@
 {
   "name": "crytrac",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "",
   "bin": "index.js",
   "scripts": {
