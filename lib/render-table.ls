@@ -77,8 +77,6 @@ available-columns =
 export available-columns
 export class TableRenderer
   (@options) ->
-    @formatters = locale.get-formatters @options.convert, (@options.columns?0 is \symbol)
-
     @options.columns =
       | @options.columns?.length => @options.columns
       | @options.value-only => <[ symbol value ]>
@@ -89,6 +87,8 @@ export class TableRenderer
 
     if @options.show-count
       @options.columns.push \count unless \count in @options.columns
+
+    @formatters = locale.get-formatters @options.convert, (@options.columns?0 is \symbol)
 
   format: (details) ~>
     column-data = @options.columns
