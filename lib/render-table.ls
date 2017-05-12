@@ -25,14 +25,14 @@ up-down-style = (value, formatted) -->
   | otherwise => chalk.white.dim formatted
 
 available-columns =
-  symbol:
-    display: ''
-    style: chalk.white
-    contents: (.symbol)
   name:
     display: ''
     style: chalk.white
     contents: (.currency.name)
+  symbol:
+    display: ''
+    style: chalk.white
+    contents: (.symbol)
   value:
     display: \Value
     style: chalk.yellow
@@ -75,12 +75,12 @@ available-columns =
     formatter: \currency
 
 export available-columns
-export class TableRenderer
+export class Renderer
   (@options) ->
     @options.columns =
       | @options.columns?.length => @options.columns
       | @options.value-only => <[ symbol value ]>
-      | otherwise => <[ symbol value 1-hour-change 24-hour-change ]>
+      | otherwise => <[ name value 1-hour-change 24-hour-change ]>
 
     if @options.symbol
       @options.columns = @options.columns |> map -> switch it | \name => \symbol | otherwise => it

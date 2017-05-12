@@ -49,7 +49,8 @@ Total:    $2954.90
     -f, --file <f>            file to use for holdings [~/.hodlings]
     -x, --convert <currency>  currency to display
     --hide-header             don't display table header
-    --columns <columns>       columns to display [name,value,1-hour-change,24-hour-change]
+    --format <format>         sets ouput format (table,csv) [table]
+    --columns <columns>       columns to display
     --locale <locale>         locale to use for formatting [en]
     --supported-currencies    shows list of supported currencies
     --supported-locales       shows list of supported locales

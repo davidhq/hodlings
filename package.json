@@ -1,6 +1,6 @@
 {
   "name": "crytrac",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Display value of crypto-currency holdings.",
   "bin": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "charm": "^1.0.2",
     "cldr-data": "^31.0.2",
     "commander": "^2.9.0",
+    "csv-stringify": "^1.0.4",
     "globalize": "^1.2.3",
     "homedir": "^0.6.0",
     "livescript": "^1.5.0",
