@@ -53,6 +53,11 @@ available-columns =
     conditional-style: up-down-style
     contents: -> parseFloat(it.currency.percent_change_24h) / 100
     formatter: \percent
+  "7-day-change":
+    display: \7D%
+    conditional-style: up-down-style
+    contents: -> parseFloat(it.currency.percent_change_7d) / 100
+    formatter: \percent
   count:
     display: \Count
     style: chalk.white.dim

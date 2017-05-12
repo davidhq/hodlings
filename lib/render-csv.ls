@@ -20,6 +20,9 @@ available-columns =
   "24-hour-change":
     display: \24H%
     contents: -> parseFloat(it.currency.percent_change_24h) / 100
+  "7-day-change":
+    display: \7D%
+    contents: -> parseFloat(it.currency.percent_change_7d) / 100
   count:
     display: \Count
     contents: (.count)
