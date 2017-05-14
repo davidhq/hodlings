@@ -1,5 +1,5 @@
 require! <[ rest timespan ]>
-require! 'prelude-ls' : { map, filter, lines }
+require! 'prelude-ls' : { map, filter, lines, sum, each }
 client = rest.wrap require('rest/interceptor/mime')
              .wrap require('rest/interceptor/errorCode')
              .wrap require('rest/interceptor/retry', ), initial: timespan.from-seconds(5).total-milliseconds!
@@ -62,10 +62,17 @@ function get-latest(hodlings, cb)
         market-cap: currency["market_cap_#{fx}"] |> parseFloat
         currency: currency
 
-    hodlings
-    |> map get-value
-    |> filter (?)
-    |> cb
+    details =
+      hodlings
+      |> map get-value
+      |> filter (?)
+
+    grand-total = details |> map (.value) |> sum
+    details |> each -> it.percentage = it.value / grand-total
+
+    cb do
+      grand-total: grand-total
+      details: details
 
   on-failure = -> cb "!!! Error accessing data service"
 

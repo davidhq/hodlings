@@ -1,6 +1,6 @@
 require! <[ chalk ]>
 require! <[ ./locale ]>
-require! 'prelude-ls' : { flip, map, sum, take, sort-by, reverse, each }
+require! 'prelude-ls' : { flip, map, sort-by, reverse }
 require! table : { table, getBorderCharacters }
 
 generate-table = (flip table) do
@@ -78,6 +78,11 @@ available-columns =
     style: chalk.magenta
     contents: (.market-cap)
     formatter: \currency
+  percentage:
+    display: \Pct
+    style: chalk.blue
+    contents: (.percentage)
+    formatter: \percent
 
 export available-columns
 export class Renderer
@@ -95,23 +100,26 @@ export class Renderer
 
     @formatters = locale.get-formatters @options.convert, (@options.columns?0 is \symbol)
 
-  format: (details) ~>
+  format: (portfolio) ~>
     column-data = @options.columns
-    |> map ~> available-columns[it]
-    data = details |> map (detail) ~>
-      column-data |> map ~>
-        value = detail |> it.contents
+      |> map ~> available-columns[it]
+    data = portfolio.details
+      |> sort-by (.value)
+      |> reverse
+      |> map (detail) ~>
+        column-data |> map ~>
+          value = detail |> it.contents
 
-        style =
-          | it.style? => that
-          | it.conditional-style? => value |> that
-          | otherwise => id
+          style =
+            | it.style? => that
+            | it.conditional-style? => value |> that
+            | otherwise => id
 
-        value
-          |> @formatters[it.formatter ? 'default']
-          |> style
+          value
+            |> @formatters[it.formatter ? 'default']
+            |> style
 
-    grand-total = (details |> map (.value) |> sum |> @formatters.currency)
+    grand-total = portfolio.grand-total |> @formatters.currency
     footer = [''] * @options.columns.length
       ..0 = style.total-label(\Total:)
       ..1 = style.total-value(grand-total)
@@ -124,11 +132,8 @@ export class Renderer
 
     return data
 
-  render: (data, cb) ~>
-    data
-    |> sort-by (.value)
-    |> reverse
+  render: (portfolio, cb) ~>
+    portfolio
     |> @format
     |> generate-table
     |> cb
-

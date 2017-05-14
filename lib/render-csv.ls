@@ -35,6 +35,9 @@ available-columns =
   "market-cap":
     display: 'Mkt Cap'
     contents: (.market-cap)
+  percentage:
+    display: 'Percentage of Portfolio'
+    contents: (.percentage)
 
 export available-columns
 export class Renderer
@@ -44,9 +47,9 @@ export class Renderer
       | @options.value-only => <[ symbol value ]>
       | otherwise => available-columns |> keys
 
-  render: (cells, cb) ~>
+  render: (portfolio, cb) ~>
     columns = @options.columns |> map -> available-columns[it]
-    rows = cells |> map (cell) -> columns |> map (.contents cell)
+    rows = portfolio.details |> map (cell) -> columns |> map (.contents cell)
     header = columns |> map (.display)
     csv-stringify rows, { columns: header, header: true }, (err, output) ->
       cb output

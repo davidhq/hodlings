@@ -1,4 +1,4 @@
-require! 'prelude-ls' : { map, reject, each, split, join, keys, unique }
+require! 'prelude-ls' : { map, reject, each, split, join, keys, unique, any }
 require! <[ commander homedir ./locale ]>
 
 export get-options = ->
@@ -44,12 +44,16 @@ export get-options = ->
   if options.available-columns
     console.log  "Supported columns:"
     available-columns |> keys |> join ", " |> console.log
+    console.log "Or use 'all'."
     process.exit 0
 
-  bad-args = options.columns |> reject -> it of available-columns
+  if options.columns |> any (is \all)
+    options.columns = available-columns |> keys
+  else
+    bad-args = options.columns |> reject -> it of available-columns
 
-  if bad-args.length then
-    bad-args |> each -> console.error "Unknown column name: #{it}"
-    process.exit -1
+    if bad-args.length then
+      bad-args |> each -> console.error "Unknown column name: #{it}"
+      process.exit -1
 
   return options
