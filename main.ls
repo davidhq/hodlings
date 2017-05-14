@@ -4,7 +4,7 @@ client = rest.wrap require('rest/interceptor/mime')
              .wrap require('rest/interceptor/errorCode')
              .wrap require('rest/interceptor/retry', ), initial: timespan.from-seconds(5).total-milliseconds!
              .wrap require('rest/interceptor/timeout'), timeout: timespan.from-seconds(80).total-milliseconds!
-
+require! bluebird: Promise
 require! <[ ./lib/portfolio ./lib/cli-options ]>
 
 options = cli-options.get-options!
@@ -13,8 +13,10 @@ portfolio.ensure-exists options.file
 renderer = new options.Renderer(options)
 
 execute = (cb = console.log) ->
-  (data) <- get-latest portfolio.load(options.file)
-  renderer.render data, cb
+  portfolio.load(options.file)
+  |> get-latest
+  |> (.then renderer.render)
+  |> (.then cb)
 
 if options.watch
   display = require(\charm)(process)
@@ -28,17 +30,16 @@ if options.watch
     execute ->
       display.erase(\down).write(it).cursor(false)
       last-rows := it |> lines |> (.length)
+    |> (.catch !->)
   display-latest-values!
 
   interval = timespan.from-seconds(90).total-milliseconds!
   setInterval display-latest-values, interval
 else
-  execute!
+  execute!.catch !-> process.exit -1
 
-function get-latest(hodlings, cb)
-  on-success = (response) ->
-    currencies = {[..symbol, ..] for response.entity}
-
+function get-latest(hodlings)
+  on-success = (global, currencies) ->
     get-value = ({ symbol, amount }) ->
       currency = currencies[symbol]
       unless currency? then
@@ -70,12 +71,23 @@ function get-latest(hodlings, cb)
     grand-total = details |> map (.value) |> sum
     details |> each -> it.percentage = it.value / grand-total
 
-    cb do
+    return
       grand-total: grand-total
       details: details
+      global: global
 
-  on-failure = -> cb "!!! Error accessing data service"
+  convert-string =
+    | options.convert is not /^USD$/i =>  "?convert=#{options.convert}"
+    | otherwise => ""
 
-  url = 'https://api.coinmarketcap.com/v1/ticker/'
-  unless options.convert is /^USD$/i then url += "?convert=#{options.convert}"
-  client({path: url}).then on-success, on-failure
+  currencies-url = 'https://api.coinmarketcap.com/v1/ticker/'
+  unless options.convert is /^USD$/i then currencies-url += "?convert=#{options.convert}"
+  global-url = 'https://api.coinmarketcap.com/v1/global/'
+
+  Promise.join do
+    client({ path: global-url + convert-string }). then (.entity)
+    client({ path: currencies-url + convert-string }). then (response) -> { [..symbol, ..] for response.entity }
+    on-success
+  .catch (e) !->
+    console.error "!!! Error accessing service"
+    throw e

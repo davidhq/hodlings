@@ -1,6 +1,6 @@
 require! <[ chalk ]>
 require! <[ ./locale ]>
-require! 'prelude-ls' : { flip, map, sort-by, reverse }
+require! 'prelude-ls' : { flip, map, sort-by, reverse, join }
 require! table : { table, getBorderCharacters }
 
 generate-table = (flip table) do
@@ -18,6 +18,7 @@ style =
   date: chalk.white.dim
   total-label: chalk.white.bold
   total-value: chalk.yellow.bold
+  footer-value: chalk.blue.bold
 
 up-down-style = (value, formatted) -->
   | value > 0 => chalk.green formatted
@@ -100,10 +101,10 @@ export class Renderer
 
     @formatters = locale.get-formatters @options.convert, (@options.columns?0 is \symbol)
 
-  format: (portfolio) ~>
+  format: (details) ~>
     column-data = @options.columns
       |> map ~> available-columns[it]
-    data = portfolio.details
+    data = details
       |> sort-by (.value)
       |> reverse
       |> map (detail) ~>
@@ -119,12 +120,6 @@ export class Renderer
             |> @formatters[it.formatter ? 'default']
             |> style
 
-    grand-total = portfolio.grand-total |> @formatters.currency
-    footer = [''] * @options.columns.length
-      ..0 = style.total-label(\Total:)
-      ..1 = style.total-value(grand-total)
-    data.push footer
-
     unless @options.value-only or @options.hide-header
       headers = (column-data |> map (.display)) |> map style.header
         ..0 = style.date(new Date! |> @formatters.time)
@@ -132,8 +127,16 @@ export class Renderer
 
     return data
 
-  render: (portfolio, cb) ~>
-    portfolio
+  add-footer: (portfolio, previous) ~~>
+    market-cap-key = "total_market_cap_#{ @options.convert.toLowerCase! }"
+    footer =
+      * [ style.total-label(\Total:), portfolio.grand-total |> @formatters.currency |> style.total-value ]
+      * [ style.total-label("Cap (M):"), portfolio.global[market-cap-key] / 1e6 |> @formatters.currency |> style.footer-value ]
+      * [ style.total-label("BTC:"), portfolio.global.bitcoin_percentage_of_market_cap / 100 |> @formatters.percent |> style.footer-value ]
+    previous + (footer |> map join " " |> join " / ")
+
+  render: (portfolio) ~>
+    portfolio.details
     |> @format
     |> generate-table
-    |> cb
+    |> @add-footer portfolio
