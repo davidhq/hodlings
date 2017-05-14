@@ -3,6 +3,11 @@ require! <[ commander homedir ./locale ]>
 
 export get-options = ->
   parse-column-arguments = -> it |> split \, |> map (.toLowerCase!) |> unique
+  parse-currency = ->
+    | it is /^AUD|BRL|CAD|CHF|CNY|EUR|GBP|HKD|IDR|INR|JPY|KRW|MXN|RUB$/i => it.to-upper-case!
+    | otherwise =>
+      console.error "Unknown currency: #{it}"
+      process.exit -1
 
   options = commander
     .option "-w, --watch" "refresh data periodically"
@@ -10,7 +15,7 @@ export get-options = ->
     .option "-v, --value-only" "only display value (deprecated)"
     .option "-c, --show-count" "show amount of each coin (deprecated)"
     .option "-f, --file <f>" "file to use for holdings [~/.hodlings]" (homedir! + '/.hodlings')
-    .option "-x, --convert <currency>" "currency to display", /^AUD|BRL|CAD|CHF|CNY|EUR|GBP|HKD|IDR|INR|JPY|KRW|MXN|RUB$/i, "USD"
+    .option "-x, --convert <currency>" "currency to display", parse-currency, "USD"
     .option "--hide-header" "don't display table header"
     .option "--format <format>" "sets ouput format (table,csv) [table]", \table
     .option "--columns <columns>" "columns to display", parse-column-arguments, []

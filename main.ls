@@ -1,9 +1,12 @@
 require! <[ rest timespan ]>
 require! 'prelude-ls' : { map, filter, lines, sum, each }
+
+data-url = "https://api.coinmarketcap.com/v1/"
 client = rest.wrap require('rest/interceptor/mime')
              .wrap require('rest/interceptor/errorCode')
              .wrap require('rest/interceptor/retry', ), initial: timespan.from-seconds(5).total-milliseconds!
              .wrap require('rest/interceptor/timeout'), timeout: timespan.from-seconds(80).total-milliseconds!
+             .wrap require('rest/interceptor/pathPrefix'), prefix: data-url
 require! bluebird: Promise
 require! <[ ./lib/portfolio ./lib/cli-options ]>
 
@@ -41,7 +44,7 @@ else
   execute!.catch !-> process.exit -1
 
 function get-latest(hodlings)
-  on-success = (global, currencies) ->
+  process-data = (global, currencies) ->
     get-value = ({ symbol, amount }) ->
       currency = currencies[symbol]
       unless currency? then
@@ -79,17 +82,18 @@ function get-latest(hodlings)
       global: global
 
   convert-string =
-    | options.convert is not /^USD$/i =>  "?convert=#{options.convert}"
-    | otherwise => ""
+    | options.convert is /^USD$/i => ""
+    | otherwise => "?convert=#{options.convert}"
 
-  currencies-url = 'https://api.coinmarketcap.com/v1/ticker/'
-  unless options.convert is /^USD$/i then currencies-url += "?convert=#{options.convert}"
-  global-url = 'https://api.coinmarketcap.com/v1/global/'
+  make-request = (url) ->
+    url + convert-string
+    |> client
+    |> (.entity!)
 
   Promise.join do
-    client({ path: global-url + convert-string }). then (.entity)
-    client({ path: currencies-url + convert-string }). then (response) -> { [..symbol, ..] for response.entity }
-    on-success
+    make-request(\global/)
+    make-request(\ticker/).then (entity) -> { [..symbol, ..] for entity }
+    process-data
   .catch (e) !->
-    console.error "!!! Error accessing service"
+    console.error "!!! Error accessing service: #{e}"
     throw e
