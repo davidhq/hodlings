@@ -26,7 +26,7 @@ if options.watch
   last-rows = 0
 
   display-latest-values = ->
-    display.up(last-rows - 1).cursor(true) if last-rows
+    display.up(last-rows - 1).left(999).cursor(true) if last-rows
     execute ->
       display.erase(\down).write(it).cursor(false)
       last-rows := it |> lines |> (.length)
