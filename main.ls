@@ -22,7 +22,9 @@ if options.watch
   display = require(\charm)(process)
     .cursor false
 
-  process.on \exit -> display.cursor true
+  process.on \exit ->
+    display.cursor true
+    console.log!
   last-rows = 0
 
   display-latest-values = ->
