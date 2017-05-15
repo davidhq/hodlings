@@ -1,12 +1,17 @@
 {
   "name": "crytrac",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "Display value of crypto-currency holdings.",
   "bin": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository" :
+  {
+     "type" : "git",
+     "url" : "https://github.com/Talljoe/crytrac.git"
+  },
+  "author": "Joe Wasson",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.0",
