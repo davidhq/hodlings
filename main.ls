@@ -41,7 +41,9 @@ if options.watch
   interval = timespan.from-seconds(90).total-milliseconds!
   setInterval display-latest-values, interval
 else
-  execute!.catch !-> process.exit -1
+  execute!.catch (e) !->
+    throw e
+    process.exit -1
 
 function get-latest(hodlings)
   process-data = (global, currencies) ->

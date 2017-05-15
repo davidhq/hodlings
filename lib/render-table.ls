@@ -91,7 +91,7 @@ export class Renderer
     @options.columns =
       | @options.columns?.length => @options.columns
       | @options.value-only => <[ symbol value ]>
-      | otherwise => <[ name value 1-hour-change 24-hour-change ]>
+      | otherwise => <[ name value 1-hour-change 24-hour-change 7-day-change percentage ]>
 
     if @options.symbol
       @options.columns = @options.columns |> map -> switch it | \name => \symbol | otherwise => it
@@ -121,9 +121,7 @@ export class Renderer
             |> style
 
     unless @options.value-only or @options.hide-header
-      headers = (column-data |> map (.display)) |> map style.header
-        ..0 = style.date(new Date! |> @formatters.time)
-      data.unshift headers
+      column-data |> map (.display) |> map style.header |> data.unshift
 
     return data
 
@@ -131,8 +129,9 @@ export class Renderer
     market-cap-key = "total_market_cap_#{ @options.convert.toLowerCase! }"
     footer =
       * [ style.total-label(\Total:), portfolio.grand-total |> @formatters.currency |> style.total-value ]
-      * [ style.total-label("Cap (M):"), portfolio.global[market-cap-key] / 1e6 |> @formatters.currency |> style.footer-value ]
+      * [ style.total-label("Cap (M):"), portfolio.global[market-cap-key] |> @formatters.big-currency |> style.footer-value ]
       * [ style.total-label("BTC:"), portfolio.global.bitcoin_percentage_of_market_cap / 100 |> @formatters.percent |> style.footer-value ]
+      * [ new Date! |> @formatters.time |> style.date ]
     previous + (footer |> map join " " |> join " / ")
 
   render: (portfolio) ~>

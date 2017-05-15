@@ -1,6 +1,6 @@
 {
   "name": "crytrac",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Display value of crypto-currency holdings.",
   "bin": "index.js",
   "scripts": {

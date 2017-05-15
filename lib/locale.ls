@@ -40,11 +40,24 @@ export
       | short-form => skeleton: \Hm
       | otherwise => time: \medium
 
+    big-number-formatter = globalize-locale.number-formatter do
+      minimum-fraction-digits: 0
+      maximum-fraction-digits: 2
+
+    number-formatter = globalize-locale.number-formatter do
+      minimum-fraction-digits: 0
+      maximum-fraction-digits: 4
+
     return
+      big-currency: ->
+        globalize-locale.format-currency it / 1e6, currency, do
+          use-grouping: true
+          maximum-fraction-digits: 0
       currency: globalize-locale.currency-formatter(currency, use-grouping: true)
-      number: globalize-locale.number-formatter do
-        maximum-fraction-digits: 4
-        minimum-fraction-digits: 0
+      number: (value) ->
+        | value > 1e7 => big-number-formatter(value / 1e6) + " m"
+        | value > 1e5 => big-number-formatter(value / 1e3) + " k"
+        | otherwise => number-formatter value
       percent: globalize-locale.number-formatter do
         style: \percent
         maximum-fraction-digits: 2
