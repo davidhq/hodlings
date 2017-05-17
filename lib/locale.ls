@@ -56,7 +56,7 @@ export
       currency: globalize-locale.currency-formatter(currency, use-grouping: true)
       number: (value) ->
         | value > 1e7 => big-number-formatter(value / 1e6) + " m"
-        | value > 1e5 => big-number-formatter(value / 1e3) + " k"
+        | value > 1e4 => big-number-formatter(value / 1e3) + " k"
         | otherwise => number-formatter value
       percent: globalize-locale.number-formatter do
         style: \percent
