@@ -1,3 +1,6 @@
+# ignored project files and folders
+data
+
 # Logs
 logs
 *.log

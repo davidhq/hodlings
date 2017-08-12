@@ -1,5 +1,7 @@
 require! <[ rest timespan ]>
 require! 'prelude-ls' : { map, filter, lines, sum, each }
+require! 'path'
+require! 'fs' : { readFileSync, writeFileSync, existsSync, mkdirSync }
 
 data-url = "https://api.coinmarketcap.com/v1/"
 client = rest.wrap require('rest/interceptor/mime')
@@ -14,6 +16,11 @@ options = cli-options.get-options!
 
 portfolio.ensure-exists options.file
 renderer = new options.Renderer(options)
+
+data-dir = path.join __dirname, 'data'
+unless existsSync data-dir
+  mkdirSync data-dir
+lastValuesFile = path.join data-dir, './data.json'
 
 execute = (cb = console.log) ->
   portfolio.load(options.file)
@@ -45,10 +52,27 @@ else
     throw e
     process.exit -1
 
+function find-currency(currencies, id_or_symbol)
+  currency = currencies.find (currency) -> currency.id.toLowerCase() == id_or_symbol.toLowerCase()
+  if currency
+    return currency
+  else
+    return currencies.find (currency) -> currency.symbol.toLowerCase() == id_or_symbol.toLowerCase()
+
+function write-last-values(details, currencies)
+  last-values =
+    price_btc_usd: find-currency(currencies, "bitcoin").price_usd
+    portfolio: details |> map (entry) -> { id: find-currency(currencies, entry.id).id, price_btc: entry.price-btc }
+  writeFileSync lastValuesFile, JSON.stringify last-values
+
 function get-latest(hodlings)
-  process-data = (global, currencies) ->
+  process-data = (global, currencies, last-values) ->
+
+    bitcoin = find-currency(currencies, "bitcoin")
+    ethereum = find-currency(currencies, "ethereum")
+
     get-value = ({ symbol, amount }) ->
-      currency = currencies[symbol]
+      currency = find-currency(currencies, symbol)
 
       unless currency? then
         console.error "Unknown coin: #{symbol}"
@@ -62,8 +86,22 @@ function get-latest(hodlings)
       amount-for-currency = (*) amount
       value = amount-for-currency price
       value-btc = amount-for-currency price-btc
-      price-eth = currencies["ethereum"].price_btc
-      value-eth = value-btc / price-eth
+      value-eth = value-btc / ethereum.price_btc
+
+      changes = {}
+
+      change-eth-week = ethereum.percent_change_7d |> parseFloat
+      changes.week-vs-eth = (currency.percent_change_7d - change-eth-week) / 100
+
+      change-btc-week = bitcoin.percent_change_7d |> parseFloat
+      changes.week-vs-btc = (currency.percent_change_7d - change-btc-week) / 100
+
+      if last-values
+        last-currency = last-values.portfolio.find (entry) -> entry.id == find-currency(currencies, symbol).id
+        if last-currency
+          price_btc_usd = bitcoin.price_usd |> parseFloat
+          changes.vs-usd = (price_btc_usd * price-btc) / (last-currency.price_btc * last-values.price_btc_usd) - 1
+
       return
         count: amount
         value: value
@@ -71,10 +109,15 @@ function get-latest(hodlings)
         value-eth: value-eth
         price: price
         price-btc: price-btc
+        change-vs-usd: changes.vs-usd || 0
+        change-week-vs-eth: changes.week-vs-eth || 0
+        change-week-vs-btc: changes.week-vs-btc || 0
+        id: symbol
         symbol: currency.symbol
         amount: amount
         volume: volume
         market-cap: currency["market_cap_#{fx}"] |> parseFloat
+        rank: currency.rank
         currency: currency
 
     details =
@@ -82,7 +125,7 @@ function get-latest(hodlings)
       |> map get-value
       |> filter (?)
 
-    #console.log details
+    write-last-values(details, currencies)
 
     grand-total = details |> map (.value) |> sum
     grand-total-eth = details |> map (.value-eth) |> sum
@@ -90,10 +133,10 @@ function get-latest(hodlings)
     details |> each -> it.percentage = it.value / grand-total
 
     fx = options.convert.toLowerCase!
-    flippening = (currencies["ethereum"]["market_cap_#{fx}"] |> parseFloat) /
-                 (currencies["bitcoin"]["market_cap_#{fx}"] |> parseFloat)
+    flippening = (ethereum["market_cap_#{fx}"] |> parseFloat) /
+                 (bitcoin["market_cap_#{fx}"] |> parseFloat)
 
-    ethereum_percentage_of_market_cap = ((currencies["ethereum"]["market_cap_#{fx}"] |> parseFloat) * 100) /
+    ethereum_percentage_of_market_cap = ((ethereum["market_cap_#{fx}"] |> parseFloat) * 100) /
                                         (global["total_market_cap_#{fx}"] |> parseFloat)
 
     return
@@ -114,9 +157,14 @@ function get-latest(hodlings)
     |> client
     |> (.entity!)
 
+  last-values = undefined
+  if existsSync lastValuesFile
+    last-values = JSON.parse (readFileSync lastValuesFile)
+
   Promise.join do
     make-request(\global/)
-    make-request(\ticker/).then (entity) -> { [..id, ..] for entity }
+    make-request(\ticker/).then (entity) -> entity
+    last-values
     process-data
   .catch (e) !->
     console.error "!!! Error accessing service: #{e}"

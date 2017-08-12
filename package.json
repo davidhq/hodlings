@@ -1,16 +1,16 @@
 {
-  "name": "crytrac",
-  "version": "0.10.3",
-  "description": "Display value of crypto-currency holdings.",
+  "name": "hodlings",
+  "version": "0.5.97",
+  "description": "Display value of crypto-currency hodlings.",
   "bin": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Talljoe/crytrac.git"
+    "url": "https://github.com/davidhq/hodlings.git"
   },
-  "author": "Joe Wasson",
+  "author": "davidhq / Joe Wasson",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.0",

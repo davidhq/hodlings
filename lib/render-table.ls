@@ -30,44 +30,25 @@ available-columns =
     display: ''
     style: chalk.cyan
     contents: (.currency.name)
-  # symbol:
-  #   display: ''
-  #   style: chalk.white
-  #   contents: (.symbol)
-  # "value-eur":
-  #   display: 'Value (EUR)'
-  #   style: chalk.yellow
-  #   contents: (.value-eur)
-  #   formatter: \number
-  price:
-    display: \Price
-    style: chalk.magenta
-    contents: (.price)
-    formatter: \currency
   value:
     display: \Value
     style: chalk.yellow
     contents: (.value)
     formatter: \currency
+  price:
+    display: \Price
+    style: chalk.magenta
+    contents: (.price)
+    formatter: \currency
+  change:
+    display: \Change
+    conditional-style: up-down-style
+    contents: (.change-vs-usd)
+    formatter: \percent
   percentage:
     display: \Pct
     style: chalk.cyan.dim
     contents: (.percentage)
-    formatter: \percent
-  "last-check":
-    display: \LastCheck
-    conditional-style: up-down-style
-    contents: -> parseFloat(it.currency.percent_change_7d) / 100
-    formatter: \percent
-  "last-check-vs-eth":
-    display: \VsETH
-    conditional-style: up-down-style
-    contents: -> parseFloat(it.currency.percent_change_7d) / 100
-    formatter: \percent
-  "last-check-vs-btc":
-    display: \VsBTC
-    conditional-style: up-down-style
-    contents: -> parseFloat(it.currency.percent_change_7d) / 100
     formatter: \percent
   "1-hour-change":
     display: \1H
@@ -89,18 +70,32 @@ available-columns =
     style: chalk.white.dim
     contents: (.count)
     formatter: \number
+  symbol:
+    display: 'Symbol'
+    style: chalk.white
+    contents: (.symbol)
   "value-eth":
-    display: 'Value (ETH)'
+    display: 'Value ETH'
     style: chalk.yellow
     contents: (.value-eth)
     formatter: \number
   "value-btc":
-    display: 'Value (BTC)'
+    display: 'Value BTC'
     style: chalk.yellow
     contents: (.value-btc)
     formatter: \number
+  "7-day-change-vs-eth":
+    display: \7DvsETH
+    conditional-style: up-down-style
+    contents: (.change-week-vs-eth)
+    formatter: \percent
+  "7-day-change-vs-btc":
+    display: \7DvsBTC
+    conditional-style: up-down-style
+    contents: (.change-week-vs-btc)
+    formatter: \percent
   "volume-24h":
-    display: \Volume24h
+    display: "Volume 24h"
     style: chalk.magenta.dim
     contents: (.volume)
     formatter: \currency
@@ -109,8 +104,12 @@ available-columns =
     style: chalk.cyan.dim
     contents: (.market-cap)
     formatter: \currency
-  symbol:
-    display: ''
+  rank:
+    display: 'Rank'
+    style: chalk.white
+    contents: (.rank)
+  "symbol-repeat":
+    display: 'Symbol'
     style: chalk.white
     contents: (.symbol)
 

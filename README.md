@@ -1,65 +1,42 @@
-# crytrac
-Display value of crypto-currency holdings. Prices fetched from [CryptoCurrency Market Capitalizations](https://api.coinmarketcap.com/v1/ticker/).
+# hodlings
 
-![Sample Output](https://github.com/Talljoe/crytrac/blob/master/output.png?raw=true)
+Display value of crypto-currency hodlings. Prices fetched from [coinmarketcap API](https://api.coinmarketcap.com/v1/ticker/).
+
+Sample output:
+
+![Sample Output](https://github.com/davidhq/hodlings/blob/master/output.png?raw=true)
 
 ## Install
 
-``sudo npm install -g crytrac``
-
-## Configure
-
-Create the file `~/.hodlings` containing your portfolio. You can
-have the same currency on more than one line, all values are summed
-together. Use `#` to put in comments.
-
-### Example
-```
-# Main Hodlings
-BTC: 0.3123
-ETH: 14.99858897
-ETC: 46.27405992
-DASH: 23.50598398
-SWT: 30
-GNT: 148
-SNGLS: 623
-```
+``npm install -g hodlings``
 
 ## Run
 
-``crytrac``
+``hodlings``
 
-### Sample output:
+## Configure
 
+Create or edit the file `~/.hodlings` (Linux/MacOS: */home/[user]*, Windows: *c:\\Users\\[user]*) containing your portfolio. Use `#` to put in comments.
 
+### Example
 ```
-                      Value     1H%    24H%      7D%     Pct
-Dash              $2,042.01   0.95%  -2.68%  -13.60%  45.78%
-Ethereum          $1,401.67   0.87%   3.97%    1.22%  31.43%
-Bitcoin             $540.89   0.78%  -3.48%    4.53%  12.13%
-Ethereum Classic    $298.37  -0.15%   2.94%   -5.74%   6.69%
-SingularDTV          $96.68   3.13%  -1.75%   28.76%   2.17%
-Swarm City           $50.27   0.90%  -7.43%  -18.53%   1.13%
-Golem                $30.43  -3.08%  -3.00%  -15.14%   0.68%
-Total: $4,460.32 / Cap (M): $54,751 / BTC: 51.66% / 9:46:57 AM
-
+# Hodlings
+BTC: 0.3123
+ETH: 14.99858897
+GNT: 148
+REP: 623
 ```
 
 ## Options
 ```
-  Usage: crytrac [options]
+  Usage: hodlings [options]
 
   Options:
 
     -h, --help                output usage information
     -w, --watch               refresh data periodically
-    -s, --symbol              use symbol instead of full name
-    -v, --value-only          only display value (deprecated)
-    -c, --show-count          show amount of each coin (deprecated)
     -f, --file <f>            file to use for holdings [~/.hodlings]
     -x, --convert <currency>  currency to display
-    --hide-header             don't display table header
-    --format <format>         sets ouput format (table,csv) [table]
     --columns <columns>       columns to display
     --locale <locale>         locale to use for formatting [en]
     --supported-currencies    shows list of supported currencies
@@ -68,8 +45,28 @@ Total: $4,460.32 / Cap (M): $54,751 / BTC: 51.66% / 9:46:57 AM
     --no-color                don't display colors
 ```
 
-## Tip
+## Updates and attribution
 
-* ETH: ``0x93b71c472f1C2fb95EE3F6c1c3eA46aCC730A23e``
-* DASH: ``XgeBMNGJYzKB1kTkNQEM6GDg8oxNQvwmL3``
-* BTC: ``176DTiuLzVLCvTQD1HTpBRKNgM25TvLTxi``
+**hodlings** is based on [crytrac](https://github.com/Talljoe/crytrac).
+
+Improvements over original project:
+
+* show percentage change vs USD since last run in addition to 1h, 24h and 7d changes
+* show 7d change vs ETH and BTC as well
+* show each hodling value in terms of ETH and BTC in addition to chosen fiat currency USD, EUR... (*-x* option)
+* coins in *~/.hodlings* file can be specified with ids (*basic-attention-token* instead of symbols, eg. *BAT*). Some coins were ambiguous (same symbol) which caused problems. Using ids is recommended.
+* all columns are shown by default because users mostly don't know how to turn them on before reading *--help* and besides mostly all columns are useful and nicely laid out
+* footer shows total value in ETH and BTC in addition to chosen fiat currency
+* footer shows ETH market cap percentage of total crypto market cap
+* footer shows the *flippening ratio*
+* add 24h volume and rank columns
+* copy *.hodlings-example* file to *~/.hodlings* on first run for easier onboarding
+* adjust a few colors in the portfolio table for a nicer look
+* remove broken export to csv feature and a few deprecated or unneeded config options
+
+I changed the project's repo/name because:
+
+* easy install over npm using a new package name
+* possible rewrite in regular JavaScript instead of LiveScript and further expansion of features so regular fork would not be suitable
+
+Thanx again to [Joe Wasson](http://talljoe.com) for a great project which persuaded with simplicity and nice look.
