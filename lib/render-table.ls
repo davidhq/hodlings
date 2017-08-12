@@ -28,34 +28,59 @@ up-down-style = (value, formatted) -->
 available-columns =
   name:
     display: ''
-    style: chalk.white
+    style: chalk.cyan
     contents: (.currency.name)
-  symbol:
-    display: ''
-    style: chalk.white
-    contents: (.symbol)
+  # symbol:
+  #   display: ''
+  #   style: chalk.white
+  #   contents: (.symbol)
+  # "value-eur":
+  #   display: 'Value (EUR)'
+  #   style: chalk.yellow
+  #   contents: (.value-eur)
+  #   formatter: \number
+  price:
+    display: \Price
+    style: chalk.magenta
+    contents: (.price)
+    formatter: \currency
   value:
     display: \Value
     style: chalk.yellow
     contents: (.value)
     formatter: \currency
-  "value-btc":
-    display: 'Value (BTC)'
-    style: chalk.yellow
-    contents: (.value-btc)
-    formatter: \number
+  percentage:
+    display: \Pct
+    style: chalk.cyan.dim
+    contents: (.percentage)
+    formatter: \percent
+  "last-check":
+    display: \LastCheck
+    conditional-style: up-down-style
+    contents: -> parseFloat(it.currency.percent_change_7d) / 100
+    formatter: \percent
+  "last-check-vs-eth":
+    display: \VsETH
+    conditional-style: up-down-style
+    contents: -> parseFloat(it.currency.percent_change_7d) / 100
+    formatter: \percent
+  "last-check-vs-btc":
+    display: \VsBTC
+    conditional-style: up-down-style
+    contents: -> parseFloat(it.currency.percent_change_7d) / 100
+    formatter: \percent
   "1-hour-change":
-    display: \1H%
+    display: \1H
     conditional-style: up-down-style
     contents: -> parseFloat(it.currency.percent_change_1h) / 100
     formatter: \percent
   "24-hour-change":
-    display: \24H%
+    display: \24H
     conditional-style: up-down-style
     contents: -> parseFloat(it.currency.percent_change_24h) / 100
     formatter: \percent
   "7-day-change":
-    display: \7D%
+    display: \7D
     conditional-style: up-down-style
     contents: -> parseFloat(it.currency.percent_change_7d) / 100
     formatter: \percent
@@ -64,26 +89,30 @@ available-columns =
     style: chalk.white.dim
     contents: (.count)
     formatter: \number
-  price:
-    display: \Price
+  "value-eth":
+    display: 'Value (ETH)'
     style: chalk.yellow
-    contents: (.price)
-    formatter: \currency
-  "price-btc":
-    display: 'Price (BTC)'
-    style: chalk.yellow
-    contents: (.price-btc)
+    contents: (.value-eth)
     formatter: \number
+  "value-btc":
+    display: 'Value (BTC)'
+    style: chalk.yellow
+    contents: (.value-btc)
+    formatter: \number
+  "volume-24h":
+    display: \Volume24h
+    style: chalk.magenta.dim
+    contents: (.volume)
+    formatter: \currency
   "market-cap":
     display: 'Mkt Cap'
-    style: chalk.magenta
+    style: chalk.cyan.dim
     contents: (.market-cap)
     formatter: \currency
-  percentage:
-    display: \Pct
-    style: chalk.blue
-    contents: (.percentage)
-    formatter: \percent
+  symbol:
+    display: ''
+    style: chalk.white
+    contents: (.symbol)
 
 export available-columns
 export class Renderer
@@ -129,9 +158,14 @@ export class Renderer
     market-cap-key = "total_market_cap_#{ @options.convert.toLowerCase! }"
     footer =
       * [ style.total-label(\Total:), portfolio.grand-total |> @formatters.currency |> style.total-value ]
-      * [ style.total-label("Cap (M):"), portfolio.global[market-cap-key] |> @formatters.big-currency |> style.footer-value ]
+      * [ style.total-label("ETH:"), portfolio.grand-total-eth |> @formatters.number |> style.total-value ]
+      * [ style.total-label("BTC:"), portfolio.grand-total-btc |> @formatters.number |> style.total-value ]
+      * [ style.total-label("Cap Total (M):"), portfolio.global[market-cap-key] |> @formatters.big-currency |> style.footer-value ]
+      * [ style.total-label("ETH:"), portfolio.ethereum_percentage_of_market_cap / 100 |> @formatters.percent |> style.footer-value ]
       * [ style.total-label("BTC:"), portfolio.global.bitcoin_percentage_of_market_cap / 100 |> @formatters.percent |> style.footer-value ]
+      * [ style.total-label("Flippening:"), portfolio.flippening |> @formatters.percent |> style.footer-value ]
       * [ new Date! |> @formatters.time |> style.date ]
+      * [ "Options: --help" |> style.date ]
     previous + (footer |> map join " " |> join " / ")
 
   render: (portfolio) ~>
