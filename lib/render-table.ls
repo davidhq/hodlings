@@ -85,20 +85,20 @@ available-columns =
     contents: (.value-btc)
     formatter: \number
   "7-day-change-vs-eth":
-    display: \7DvsETH
+    display: \7DVsETH
     conditional-style: up-down-style
     contents: (.change-week-vs-eth)
     formatter: \percent
   "7-day-change-vs-btc":
-    display: \7DvsBTC
+    display: \7DVsBTC
     conditional-style: up-down-style
     contents: (.change-week-vs-btc)
     formatter: \percent
   "volume-24h":
-    display: "Volume 24h"
+    display: "Vol24hVsBTC"
     style: chalk.magenta.dim
     contents: (.volume)
-    formatter: \currency
+    formatter: \percent
   "market-cap":
     display: 'Mkt Cap'
     style: chalk.cyan.dim

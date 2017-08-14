@@ -81,7 +81,7 @@ function get-latest(hodlings)
       fx = options.convert.toLowerCase!
       price = currency["price_#{fx}"] |> parseFloat
       price-btc = currency.price_btc |> parseFloat
-      volume = currency["24h_volume_#{fx}"] |> parseFloat
+      volume = (currency["24h_volume_#{fx}"] |> parseFloat) / (bitcoin["24h_volume_#{fx}"] |> parseFloat)
 
       amount-for-currency = (*) amount
       value = amount-for-currency price
