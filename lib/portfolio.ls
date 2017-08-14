@@ -29,5 +29,5 @@ export
     |> obj-map -> it |> map (.1) |> map locale.get-parser! |> sum
     |> obj-to-pairs
     |> map ->
-      symbol: it.0
+      coin: it.0
       amount: it.1

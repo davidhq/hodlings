@@ -49,7 +49,7 @@ export
       maximum-fraction-digits: 4
 
     return
-      big-currency: ->
+      bigcurrency: ->
         globalize-locale.format-currency it / 1e6, currency, do
           use-grouping: true
           maximum-fraction-digits: 0

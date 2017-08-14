@@ -1,6 +1,6 @@
 {
   "name": "hodlings",
-  "version": "0.5.97",
+  "version": "0.6.24",
   "description": "Display value of crypto-currency hodlings.",
   "bin": "index.js",
   "scripts": {

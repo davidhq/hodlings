@@ -14,6 +14,10 @@ Sample output:
 
 ``hodlings``
 
+``hodlings -x eur``
+
+``hodlings -x cny``
+
 ## Configure
 
 Create or edit the file `~/.hodlings` (Linux/MacOS: */home/[user]*, Windows: *c:\\Users\\[user]*) containing your portfolio. Use `#` to put in comments.
@@ -59,7 +63,8 @@ Improvements over original project:
 * footer shows total value in ETH and BTC in addition to chosen fiat currency
 * footer shows ETH market cap percentage of total crypto market cap
 * footer shows the *flippening ratio*
-* add 24h volume and rank columns
+* add 24h volume (as percentage of bitcoin's volume) column
+* add rank column
 * copy *.hodlings-example* file to *~/.hodlings* on first run for easier onboarding
 * adjust a few colors in the portfolio table for a nicer look
 * remove broken export to csv feature and a few deprecated or unneeded config options

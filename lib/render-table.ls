@@ -32,7 +32,7 @@ available-columns =
     contents: (.currency.name)
   value:
     display: \Value
-    style: chalk.yellow
+    style: chalk.blue.bold
     contents: (.value)
     formatter: \currency
   price:
@@ -79,16 +79,16 @@ available-columns =
     style: chalk.yellow
     contents: (.value-eth)
     formatter: \number
-  "value-btc":
-    display: 'Value BTC'
-    style: chalk.yellow
-    contents: (.value-btc)
-    formatter: \number
   "7-day-change-vs-eth":
     display: \7DVsETH
     conditional-style: up-down-style
     contents: (.change-week-vs-eth)
     formatter: \percent
+  "value-btc":
+    display: 'Value BTC'
+    style: chalk.yellow
+    contents: (.value-btc)
+    formatter: \number
   "7-day-change-vs-btc":
     display: \7DVsBTC
     conditional-style: up-down-style
@@ -99,15 +99,15 @@ available-columns =
     style: chalk.magenta.dim
     contents: (.volume)
     formatter: \percent
-  "market-cap":
-    display: 'Mkt Cap'
-    style: chalk.cyan.dim
-    contents: (.market-cap)
-    formatter: \currency
   rank:
     display: 'Rank'
     style: chalk.white
     contents: (.rank)
+  "market-cap":
+    display: 'Cap (M)'
+    style: chalk.cyan.dim
+    contents: (.market-cap)
+    formatter: \bigcurrency
   "symbol-repeat":
     display: 'Symbol'
     style: chalk.white
@@ -155,11 +155,24 @@ export class Renderer
 
   add-footer: (portfolio, previous) ~~>
     market-cap-key = "total_market_cap_#{ @options.convert.toLowerCase! }"
+
+    total-fx = portfolio.grand-total |> @formatters.currency |> style.total-value
+    if !isNaN(portfolio.totals-change.fx) && portfolio.totals-change.fx != 0
+      total-fx += " " + (portfolio.totals-change.fx |> @formatters.percent |> up-down-style portfolio.totals-change.fx)
+
+    total-eth = portfolio.grand-total-eth |> @formatters.number |> style.total-value
+    if !isNaN(portfolio.totals-change.eth) && portfolio.totals-change.eth != 0
+      total-eth += " " + (portfolio.totals-change.eth |> @formatters.percent |> up-down-style portfolio.totals-change.eth)
+
+    total-btc = portfolio.grand-total-btc |> @formatters.number |> style.total-value
+    if !isNaN(portfolio.totals-change.btc) && portfolio.totals-change.btc != 0
+      total-btc += " " + (portfolio.totals-change.btc |> @formatters.percent |> up-down-style portfolio.totals-change.btc)
+
     footer =
-      * [ style.total-label(\Total:), portfolio.grand-total |> @formatters.currency |> style.total-value ]
-      * [ style.total-label("ETH:"), portfolio.grand-total-eth |> @formatters.number |> style.total-value ]
-      * [ style.total-label("BTC:"), portfolio.grand-total-btc |> @formatters.number |> style.total-value ]
-      * [ style.total-label("Cap Total (M):"), portfolio.global[market-cap-key] |> @formatters.big-currency |> style.footer-value ]
+      * [ style.total-label(\Total:), total-fx ]
+      * [ style.total-label("ETH:"), total-eth ]
+      * [ style.total-label("BTC:"), total-btc ]
+      * [ style.total-label("Cap Total (M):"), portfolio.global[market-cap-key] |> @formatters.bigcurrency |> style.footer-value ]
       * [ style.total-label("ETH:"), portfolio.ethereum_percentage_of_market_cap / 100 |> @formatters.percent |> style.footer-value ]
       * [ style.total-label("BTC:"), portfolio.global.bitcoin_percentage_of_market_cap / 100 |> @formatters.percent |> style.footer-value ]
       * [ style.total-label("Flippening:"), portfolio.flippening |> @formatters.percent |> style.footer-value ]
