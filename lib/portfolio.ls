@@ -9,8 +9,6 @@ obj-map = Obj.map
 export
   ensure-exists: (file) ->
     unless existsSync file
-      #console.error "Cannot find file #{file}."
-      #process.exit -1
       sourceFile = path.join __dirname, '../.hodlings-example'
       hodlings-file = path.join homedir!, ".hodlings"
       writeFileSync hodlings-file, readFileSync(sourceFile)

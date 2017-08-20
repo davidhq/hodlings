@@ -12,11 +12,11 @@ Sample output:
 
 ## Run
 
-``hodlings``
+``hodl``
 
-``hodlings -x eur``
+``hodl -x eur``
 
-``hodlings -x cny``
+``hodl -x cny``
 
 ## Configure
 
@@ -33,20 +33,21 @@ REP: 623
 
 ## Options
 ```
-  Usage: hodlings [options]
+  Usage: hodl [options]
+
 
   Options:
 
-    -h, --help                output usage information
-    -w, --watch               refresh data periodically
-    -f, --file <f>            file to use for holdings [~/.hodlings]
-    -x, --convert <currency>  currency to display
+    -w, --watch               refresh data periodically every 10 min
+    -f, --file <f>            file to use for hodlings [~/.hodlings]
+    -x, --convert <currency>  currency to display (usd, eur, cny...)
     --columns <columns>       columns to display
     --locale <locale>         locale to use for formatting [en]
     --supported-currencies    shows list of supported currencies
     --supported-locales       shows list of supported locales
     --available-columns       shows list of columns
     --no-color                don't display colors
+    -h, --help                output usage information
 ```
 
 ## Updates and attribution

@@ -10,8 +10,8 @@ export get-options = ->
       process.exit -1
 
   options = commander
-    .option "-w, --watch" "refresh data periodically"
-    .option "-f, --file <f>" "file to use for holdings [~/.hodlings]" (homedir! + '/.hodlings')
+    .option "-w, --watch" "refresh data periodically every 10 min"
+    .option "-f, --file <f>" "file to use for hodlings [~/.hodlings]" (homedir! + '/.hodlings')
     .option "-x, --convert <currency>" "currency to display (usd, eur, cny...)", parse-currency, "USD"
     .option "--columns <columns>" "columns to display", parse-column-arguments, []
     .option "--locale <locale>" "locale to use for formatting [#{locale.current}]", locale.set, locale.current

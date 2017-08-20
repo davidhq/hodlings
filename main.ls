@@ -2,7 +2,7 @@ require! <[ rest timespan ]>
 require! 'prelude-ls' : { map, filter, lines, sum, each }
 require! 'path'
 require! 'crypto'
-require! 'fs' : { readFileSync, writeFileSync, existsSync, mkdirSync }
+require! 'fs' : { readFileSync, writeFileSync, existsSync, mkdirSync, watchFile }
 
 data-url = "https://api.coinmarketcap.com/v1/"
 client = rest.wrap require('rest/interceptor/mime')
@@ -46,8 +46,11 @@ if options.watch
     |> (.catch !->)
   display-latest-values!
 
-  interval = timespan.from-seconds(90).total-milliseconds!
+  interval = timespan.from-seconds(600).total-milliseconds!
   setInterval display-latest-values, interval
+
+  watchFile options.file, (curr, prev) ->
+    display-latest-values!
 else
   execute!.catch (e) !->
     throw e
@@ -55,10 +58,7 @@ else
 
 function find-currency(currencies, id_or_symbol)
   currency = currencies.find (currency) -> currency.id.toLowerCase() == id_or_symbol.toLowerCase()
-  if currency
-    return currency
-  else
-    return currencies.find (currency) -> currency.symbol.toLowerCase() == id_or_symbol.toLowerCase()
+  return if currency then currency else currencies.find (currency) -> currency.symbol.toLowerCase() == id_or_symbol.toLowerCase()
 
 function write-last-values(details, currencies, totals, hodlings-signature)
   last-values =
@@ -140,7 +140,7 @@ function get-latest(hodlings)
     flippening = (ethereum["market_cap_#{fx}"] |> parseFloat) /
                  (bitcoin["market_cap_#{fx}"] |> parseFloat)
 
-    ethereum_percentage_of_market_cap = ((ethereum["market_cap_#{fx}"] |> parseFloat) * 100) /
+    ethereum_percentage_of_market_cap = 100 * (ethereum["market_cap_#{fx}"] |> parseFloat) /
                                         (global["total_market_cap_#{fx}"] |> parseFloat)
 
     totals =
