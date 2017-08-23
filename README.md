@@ -18,6 +18,8 @@ Sample output:
 
 ``hodl -x cny``
 
+Add `--eth` to focus on Ethereum or `--btc` to focus on Bitcoin and save space for two unneeded columns.
+
 ## Configure
 
 Create or edit the file `~/.hodlings` (Linux/MacOS: */home/[user]*, Windows: *c:\\Users\\[user]*) containing your portfolio. Use `#` to put in comments.
@@ -42,6 +44,8 @@ REP: 623
     -f, --file <f>            file to use for hodlings [~/.hodlings]
     -x, --convert <currency>  currency to display (usd, eur, cny...)
     --columns <columns>       columns to display
+    --eth                     focus on eth, hide the bitcoin-specific columns (value-btc, 7-day-change-vs-btc)
+    --btc                     focus on btc, hide the ethereum-specific columns (value-eth, 7-day-change-vs-eth)
     --locale <locale>         locale to use for formatting [en]
     --supported-currencies    shows list of supported currencies
     --supported-locales       shows list of supported locales

@@ -14,6 +14,8 @@ export get-options = ->
     .option "-f, --file <f>" "file to use for hodlings [~/.hodlings]" (homedir! + '/.hodlings')
     .option "-x, --convert <currency>" "currency to display (usd, eur, cny...)", parse-currency, "USD"
     .option "--columns <columns>" "columns to display", parse-column-arguments, []
+    .option "--eth" "focus on eth, hide the bitcoin-specific columns (value-btc, 7-day-change-vs-btc)"
+    .option "--btc" "focus on btc, hide the ethereum-specific columns (value-eth, 7-day-change-vs-eth)"
     .option "--locale <locale>" "locale to use for formatting [#{locale.current}]", locale.set, locale.current
     .option "--supported-currencies" "shows list of supported currencies" ->
       console.log """
@@ -39,6 +41,10 @@ export get-options = ->
 
   if options.columns.length == 0 || (options.columns |> any (is \all))
     options.columns = available-columns |> keys
+    if(options.btc)
+      options.columns = options.columns |> reject -> it == "value-eth" || it == "7-day-change-vs-eth"
+    if(options.eth)
+      options.columns = options.columns |> reject -> it == "value-btc" || it == "7-day-change-vs-btc"
   else
     bad-args = options.columns |> reject -> it of available-columns
 

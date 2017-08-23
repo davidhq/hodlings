@@ -177,7 +177,7 @@ export class Renderer
       * [ style.total-label("BTC:"), portfolio.global.bitcoin_percentage_of_market_cap / 100 |> @formatters.percent |> style.footer-value ]
       * [ style.total-label("Flippening:"), portfolio.flippening |> @formatters.percent |> style.footer-value ]
       * [ new Date! |> @formatters.time |> style.date ]
-      * [ "Options: --help" |> style.date ]
+      * [ "Help: -h" |> style.date ]
     previous + (footer |> map join " " |> join " / ")
 
   render: (portfolio) ~>
