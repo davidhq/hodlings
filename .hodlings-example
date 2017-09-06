@@ -17,3 +17,4 @@ iota: 12000
 
 # Read crypto ids from here:
 # https://api.coinmarketcap.com/v1/ticker/
+# Tip: helps if you install https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc?hl=en Chrome extension -> nicer view

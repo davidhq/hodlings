@@ -6,7 +6,23 @@ Sample output:
 
 ![Sample Output](https://github.com/davidhq/hodlings/blob/master/output.png?raw=true)
 
-## Install
+## Prerequisites
+
+**Summary:** `node.js` and `git`. You can skip to the next section if you already have these.
+
+- [node.js](https://nodejs.org/en/download/) spectacular platform. LTS (Long-term support) is the right choice for most.
+
+- [git](https://git-scm.com/downloads) incredible version control (needed in the background to install some dependencies on first install).
+
+**Optional:** if you want easy switching between different `node.js` versions in the future and you are using **unix based systems** (macOS, Linux), you can install `node.js` via fantastic [n](https://github.com/tj/n) (don't download it from *nodejs.org* in this case).
+
+You can also install both `node.js` and `git` via [Homebrew](https://brew.sh) friendly package manager for macOS. [n](https://github.com/tj/n) is still recommended for `node.js` though.
+
+[npm](https://www.npmjs.com) (Node Package Manager) is installed automatically with `node.js` install (just FYI).
+
+## Install hodlings project
+
+In **Terminal** (Linux, macOS) or **Command Prompt** (Windows) type:
 
 ``npm install -g hodlings``
 
@@ -14,17 +30,24 @@ Sample output:
 
 ``hodl``
 
+## Options
+
+Try `hodl -h` for complete list and here are a few examples:
+
 ``hodl -x eur``
 
 ``hodl -x cny``
 
-Add `--eth` to focus on Ethereum or `--btc` to focus on Bitcoin and save space for two unneeded columns.
+Add `--eth` to focus on **Ethereum** or `--btc` to focus on **Bitcoin** and save space for two unneeded columns.
 
 ## Configure
 
 Create or edit the file `~/.hodlings` (Linux/MacOS: */home/[user]*, Windows: *c:\\Users\\[user]*) containing your portfolio. Use `#` to put in comments.
 
 ### Example
+
+Specifying the entire portfolio is simple:
+
 ```
 # Hodlings
 BTC: 0.3123
@@ -33,7 +56,29 @@ GNT: 148
 REP: 623
 ```
 
-## Options
+Just use token ticker symbols or (even better) the token ids because multiple tokens can have the same ticker :/
+
+Same file but using token ids:
+
+```
+# Hodlings
+bitcoin: 0.3123
+ethereum: 14.99858897
+golem-network-tokens: 148
+augur: 623
+```
+
+Read token ids from [CoinMarketCap API](https://api.coinmarketcap.com/v1/ticker).
+
+**Tip:** it is much easier to read the json output in Chrome if you install the [JSONView Chrome extension](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc?hl=en) first. There are equivalent extensions for other browsers.
+
+## Notes
+
+If you run `hodl` without this file present, it will create an example file for your convenience.
+
+To use a different hodlings file for portfolio check the `-f` option (basically just use `hodl -f ~/path_to/hodlings2`).
+
+## Complete options
 ```
   Usage: hodl [options]
 
@@ -58,7 +103,7 @@ REP: 623
 
 **hodlings** is based on [crytrac](https://github.com/Talljoe/crytrac).
 
-Improvements over original project:
+Improvements over original project (I wrote this list in the beginning, there were more improvements later):
 
 * show percentage change vs USD since last run in addition to 1h, 24h and 7d changes
 * show 7d change vs ETH and BTC as well

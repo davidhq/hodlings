@@ -67,7 +67,7 @@ available-columns =
     formatter: \percent
   count:
     display: \Count
-    style: chalk.white.dim
+    style: chalk.white
     contents: (.count)
     formatter: \number
   symbol:
@@ -108,10 +108,6 @@ available-columns =
     style: chalk.cyan.dim
     contents: (.market-cap)
     formatter: \bigcurrency
-  "symbol-repeat":
-    display: 'Symbol'
-    style: chalk.white
-    contents: (.symbol)
 
 export available-columns
 export class Renderer
