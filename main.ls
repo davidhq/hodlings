@@ -67,7 +67,7 @@ function write-last-values(details, currencies, totals, hodlings-signature)
     hodlings-signature: hodlings-signature
     portfolio: details |> map (entry) -> { id: find-currency(currencies, entry.id).id, price_btc: entry.price-btc }
 
-  writeFileSync lastValuesFile, JSON.stringify last-values
+  writeFileSync lastValuesFile, JSON.stringify last-values, null, 2
 
 function get-latest(hodlings)
   hodlings-signature = crypto.createHash('md5').update(JSON.stringify hodlings).digest("hex")
@@ -156,6 +156,7 @@ function get-latest(hodlings)
     if last-values && last-values.hodlings-signature && last-values.hodlings-signature == hodlings-signature
       if last-values.totals.currency == fx
         totals-change.fx = grand-total / last-values.totals.value - 1
+        totals-change.fx-diff = grand-total - last-values.totals.value
       if last-values.totals.eth
         totals-change.eth = grand-total-eth / last-values.totals.eth - 1
       if last-values.totals.btc

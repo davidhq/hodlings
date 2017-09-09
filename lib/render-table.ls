@@ -155,6 +155,7 @@ export class Renderer
     total-fx = portfolio.grand-total |> @formatters.currency |> style.total-value
     if !isNaN(portfolio.totals-change.fx) && portfolio.totals-change.fx != 0
       total-fx += " " + (portfolio.totals-change.fx |> @formatters.percent |> up-down-style portfolio.totals-change.fx)
+      total-fx += " (" + (portfolio.totals-change.fx-diff |> @formatters.currency) + ")" |> style.date
 
     total-eth = portfolio.grand-total-eth |> @formatters.number |> style.total-value
     if !isNaN(portfolio.totals-change.eth) && portfolio.totals-change.eth != 0
