@@ -206,6 +206,18 @@ Highcharts.theme = {
 // Apply the theme
 Highcharts.setOptions(Highcharts.theme);
 
+window.fetch('/data')
+  .then((res) => res.json())
+  .then((data) => {
+    console.log(data.portfolio)
+    const highchartsDataSeries = data.portfolio
+      .map((currency) => [currency.id, currency.price_btc])
+
+    console.log(highchartsDataSeries)
+    // TODO: not entirely sure what exactly you want to do in here
+    // move container from below here to set the data?
+  })
+
 Highcharts.chart('container', {
   chart: {
     type: 'pie',

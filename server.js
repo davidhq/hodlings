@@ -33,6 +33,10 @@ const lastValuesFile = path.join(__dirname, './data/data.json');
 if (fs.existsSync(lastValuesFile)) {
   const lastValues = JSON.parse(fs.readFileSync(lastValuesFile));
   console.log(lastValues);
+
+  app.get('/data', (req, res) => {
+    res.send(lastValues)
+  })
 }
 
 var port = program.port || config.get('port') || 3000;

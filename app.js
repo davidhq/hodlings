@@ -14,7 +14,7 @@ module.exports = (prefix, options) => {
   var homeTemplate = Handlebars.compile(fs.readFileSync(path.join(__dirname, '/frontend/index.hbs.html')).toString());
 
   // Main entry
-  app.use('/', function(req, res) {
+  app.get('/', function(req, res) {
     res.send(homeTemplate({ prefix }));
   });
 
