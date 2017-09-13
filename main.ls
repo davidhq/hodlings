@@ -2,6 +2,8 @@ require! <[ rest timespan ]>
 require! 'prelude-ls' : { map, filter, lines, sum, each }
 require! 'path'
 require! 'crypto'
+require! 'homedir'
+require! <[ chalk ]>
 require! 'fs' : { readFileSync, writeFileSync, existsSync, mkdirSync, watchFile }
 
 data-url = "https://api.coinmarketcap.com/v1/"
@@ -15,7 +17,12 @@ require! <[ ./lib/portfolio ./lib/cli-options ]>
 
 options = cli-options.get-options!
 
-portfolio.ensure-exists options.file
+portfolio.ensure-main-exists!
+
+unless existsSync options.file
+  console.log chalk.red("\nFile #{options.file} not found...")
+  return
+
 renderer = new options.Renderer(options)
 
 data-dir = path.join __dirname, 'data'
