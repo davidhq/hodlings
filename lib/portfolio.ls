@@ -7,14 +7,13 @@ require! 'homedir'
 obj-map = Obj.map
 
 export
-  ensure-exists: (file) ->
-    unless existsSync file
+  ensure-main-exists: ->
+    hodlings-file = path.join homedir!, ".hodlings"
+    unless existsSync hodlings-file
       sourceFile = path.join __dirname, '../.hodlings-example'
-      hodlings-file = path.join homedir!, ".hodlings"
       writeFileSync hodlings-file, readFileSync(sourceFile)
       console.log chalk.magenta("\nFile #{hodlings-file} not found, creating sample file...")
-      console.log chalk.green("Please edit it with desired portfolio!\n")
-      console.log chalk.magenta("Sample portfolio:")
+      console.log chalk.green("Please edit it with your actual portfolio!\n")
 
   load: (file) ->
     readFileSync file, \utf8
