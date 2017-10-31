@@ -190,7 +190,8 @@ function get-latest(hodlings)
 
   last-values = undefined
   if existsSync lastValuesFile
-    last-values = JSON.parse (readFileSync lastValuesFile)
+    try
+      last-values = JSON.parse (readFileSync lastValuesFile)
 
   Promise.join do
     make-request(\global/)
