@@ -17,6 +17,7 @@ export get-options = ->
     .option "--eth" "focus on eth, hide the bitcoin-specific columns (value-btc, 7-day-change-vs-btc)"
     .option "--btc" "focus on btc, hide the ethereum-specific columns (value-eth, 7-day-change-vs-eth)"
     .option "--locale <locale>" "locale to use for formatting [#{locale.current}]", locale.set, locale.current
+    .option "-l, --limit <l>" "how many currencies we load from coinmarketcap", 1000
     .option "--supported-currencies" "shows list of supported currencies" ->
       console.log """
       Supported currencies: AUD, BRL, CAD, CHF, CNY, EUR, GBP, HKD, IDR, INR, JPY, KRW, MXN, RUB

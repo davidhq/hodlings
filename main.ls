@@ -195,7 +195,7 @@ function get-latest(hodlings)
 
   Promise.join do
     make-request(\global/)
-    make-request(\ticker/).then (entity) -> entity
+    make-request(\ticker/?limit= + options.limit).then (entity) -> entity
     last-values
     process-data
   .catch (e) !->
