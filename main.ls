@@ -180,8 +180,8 @@ function get-latest(hodlings)
       global: global
 
   convert-string =
-    | options.convert is /^USD$/i => ""
-    | otherwise => "?convert=#{options.convert}"
+    | options.convert is /^USD$/i => "?limit=0"
+    | otherwise => "?convert=#{options.convert}&limit=0"
 
   make-request = (url) ->
     url + convert-string
