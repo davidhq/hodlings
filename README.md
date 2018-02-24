@@ -1,6 +1,6 @@
 # hodlings
 
-Display value of crypto-currency hodlings. Prices fetched from [coinmarketcap API](https://api.coinmarketcap.com/v1/ticker/).
+Display value of crypto-currency hodlings. Prices fetched from [coinmarketcap API](https://api.coinmarketcap.com/v1/ticker/?limit=0).
 
 Sample output:
 
@@ -68,7 +68,7 @@ golem-network-tokens: 148
 augur: 623
 ```
 
-Read token ids from [CoinMarketCap API](https://api.coinmarketcap.com/v1/ticker).
+Read token ids from [CoinMarketCap API](https://api.coinmarketcap.com/v1/ticker?limit=0).
 
 **Tip:** it is much easier to read the json output in Chrome if you install the [JSONView Chrome extension](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc?hl=en) first. There are equivalent extensions for other browsers.
 
