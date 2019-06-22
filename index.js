@@ -1,3 +1,3 @@
 #!/usr/bin/env node
-require('livescript')
+// require('livescript')
 require('./main')
