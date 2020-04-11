@@ -6,7 +6,7 @@ require! 'homedir'
 require! <[ chalk ]>
 require! 'fs' : { readFileSync, writeFileSync, existsSync, mkdirSync, watchFile }
 
-data-url = "https://api.coinmarketcap.com/v1/"
+data-url = "https://api.coinpaprika.com/v1/"
 client = rest.wrap require('rest/interceptor/mime')
              .wrap require('rest/interceptor/errorCode')
              .wrap require('rest/interceptor/retry', ), initial: timespan.from-seconds(5).total-milliseconds!
@@ -69,7 +69,7 @@ function find-currency(currencies, id_or_symbol)
 
 function write-last-values(details, currencies, totals, hodlings-signature)
   last-values =
-    price_btc_usd: find-currency(currencies, "bitcoin").price_usd
+    price_btc_usd: find-currency(currencies, "btc-bitcoin").price_usd
     totals: totals
     hodlings-signature: hodlings-signature
     portfolio: details |> map (entry) -> { id: find-currency(currencies, entry.id).id, price_btc: entry.price-btc }
@@ -81,8 +81,11 @@ function get-latest(hodlings)
 
   process-data = (global, currencies, last-values) ->
 
-    bitcoin = find-currency(currencies, "bitcoin")
-    ethereum = find-currency(currencies, "ethereum")
+    #console.log currencies
+    #process.exit()
+
+    bitcoin = find-currency(currencies, "btc-bitcoin")
+    ethereum = find-currency(currencies, "eth-ethereum")
 
     get-value = ({ coin, amount }) ->
       currency = find-currency(currencies, coin)
@@ -92,9 +95,10 @@ function get-latest(hodlings)
         return
 
       fx = options.convert.toLowerCase!
-      price = currency["price_#{fx}"] |> parseFloat
+      #price = currency.quotes['USD']["price_#{fx}"] |> parseFloat
+      price = currency.quotes[fx.toUpperCase()]["price"] |> parseFloat
       price-btc = currency.price_btc |> parseFloat
-      volume = (currency["24h_volume_#{fx}"] |> parseFloat) / (bitcoin["24h_volume_#{fx}"] |> parseFloat)
+      volume = 0#(currency["24h_volume_#{fx}"] |> parseFloat) / (bitcoin["24h_volume_#{fx}"] |> parseFloat)
 
       amount-for-currency = (*) amount
       value = amount-for-currency price
@@ -129,7 +133,7 @@ function get-latest(hodlings)
         symbol: currency.symbol
         amount: amount
         volume: volume
-        market-cap: currency["market_cap_#{fx}"] |> parseFloat
+        market-cap: currency.quotes[fx.toUpperCase()]["market_cap"] |> parseFloat
         rank: currency.rank
         currency: currency
 
@@ -144,11 +148,11 @@ function get-latest(hodlings)
     details |> each -> it.percentage = it.value / grand-total
 
     fx = options.convert.toLowerCase!
-    flippening = (ethereum["market_cap_#{fx}"] |> parseFloat) /
-                 (bitcoin["market_cap_#{fx}"] |> parseFloat)
+    flippening = (ethereum.quotes[fx.toUpperCase()]["market_cap_#{fx}"] |> parseFloat) /
+                 (bitcoin.quotes[fx.toUpperCase()]["market_cap_#{fx}"] |> parseFloat)
 
-    ethereum_percentage_of_market_cap = 100 * (ethereum["market_cap_#{fx}"] |> parseFloat) /
-                                        (global["total_market_cap_#{fx}"] |> parseFloat)
+    ethereum_percentage_of_market_cap = 100 * (ethereum.quotes[fx.toUpperCase()]["market_cap_#{fx}"] |> parseFloat) /
+                                        (global["market_cap_#{fx}"] |> parseFloat)
 
     totals =
       value: grand-total
@@ -179,12 +183,13 @@ function get-latest(hodlings)
       ethereum_percentage_of_market_cap: ethereum_percentage_of_market_cap
       global: global
 
-  convert-string =
-    | options.convert is /^USD$/i => "?limit=0"
-    | otherwise => "?convert=#{options.convert}&limit=0"
+  #convert-string =
+    #| options.convert is /^USD$/i => "?limit=0"
+    #| otherwise => "?convert=#{options.convert}&limit=0"
 
   make-request = (url) ->
-    url + convert-string
+    # process.exit()
+    url# + convert-string
     |> client
     |> (.entity!)
 
@@ -195,7 +200,7 @@ function get-latest(hodlings)
 
   Promise.join do
     make-request(\global/)
-    make-request(\ticker/).then (entity) -> entity
+    make-request("tickers?limit=0/").then (entity) -> entity
     last-values
     process-data
   .catch (e) !->

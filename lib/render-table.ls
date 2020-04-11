@@ -53,17 +53,17 @@ available-columns =
   "1-hour-change":
     display: \1H
     conditional-style: up-down-style
-    contents: -> parseFloat(it.currency.percent_change_1h) / 100
+    contents: -> parseFloat(it.currency.quotes['USD'].percent_change_1h) / 100
     formatter: \percent
   "24-hour-change":
     display: \24H
     conditional-style: up-down-style
-    contents: -> parseFloat(it.currency.percent_change_24h) / 100
+    contents: -> parseFloat(it.currency.quotes['USD'].percent_change_24h) / 100
     formatter: \percent
   "7-day-change":
     display: \7D
     conditional-style: up-down-style
-    contents: -> parseFloat(it.currency.percent_change_7d) / 100
+    contents: -> parseFloat(it.currency.quotes['USD'].percent_change_7d) / 100
     formatter: \percent
   count:
     display: \Count
