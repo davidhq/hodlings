@@ -1,20 +1,7 @@
-# Main Hodlings
-ethereum: 1000
-augur: 500
-golem-network-tokens: 5000
-digixdao: 20
-nem: 200000
-neo: 700
-gas: 300
-singulardtv: 5000
-district0x: 100000
-omisego: 1000
-tenx: 300
-basic-attention-token: 10000
-status: 100000
-bitcoin: 1
-iota: 12000
+# My hodlings
+eth: 10
+btc: 1
 
 # Read crypto ids from here:
-# https://api.coinmarketcap.com/v1/ticker/
+# https://api.coingecko.com/api/v3/coins/list
 # Tip: helps if you install https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc?hl=en Chrome extension -> nicer view

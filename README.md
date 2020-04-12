@@ -1,16 +1,22 @@
 # hodlings
 
-Display value of crypto-currency hodlings. Prices fetched from [coinmarketcap API](https://api.coinmarketcap.com/v1/ticker/?limit=0).
+⚠️ You need **node.js** `v13.8.0` or higher.
+
+Display value of crypto-currency hodlings. Prices fetched from [coingecko API](https://www.coingecko.com/en/api).
 
 Sample output:
 
-![Sample Output](https://github.com/davidhq/hodlings/blob/master/output.png?raw=true)
+![Sample Output](img/output.png)
+
+Design:
+
+![Design](img/design.png)
 
 ## Prerequisites
 
 **Summary:** `node.js` and `git`. You can skip to the next section if you already have these.
 
-- [node.js](https://nodejs.org/en/download/) spectacular platform. LTS (Long-term support) is the right choice for most.
+- [node.js](https://nodejs.org/en/download/) platform `v13.8.0`+. Recent version is needed because of ES6 modules.
 
 - [git](https://git-scm.com/downloads) incredible version control (needed in the background to install some dependencies on first install).
 

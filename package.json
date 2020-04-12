@@ -1,7 +1,9 @@
 {
   "name": "hodlings",
-  "version": "0.6.36",
+  "version": "0.6.49",
   "description": "Display value of crypto-currency hodlings.",
+  "main": "index.js",
+  "type": "module",
   "bin": {
     "hodl": "index.js",
     "hodlings": "index.js"
@@ -13,20 +15,23 @@
     "type": "git",
     "url": "https://github.com/davidhq/hodlings.git"
   },
-  "author": "davidhq, Joe Wasson",
+  "keywords": [
+    "crypto",
+    "cryptocurrency",
+    "money",
+    "ethereum",
+    "bitcoin"
+  ],
+  "author": "davidhq",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "chalk": "^1.1.3",
-    "charm": "^1.0.2",
-    "cldr-data": "^31.0.2",
-    "commander": "^2.9.0",
-    "globalize": "^1.2.3",
-    "homedir": "^0.6.0",
-    "livescript": "^1.5.0",
-    "prelude-ls": "^1.1.2",
-    "rest": "^2.0.0",
-    "table": "^4.0.1",
-    "timespan": "^2.3.0"
+    "chalk": "^4.0.0",
+    "cldr-data": "^36.0.0",
+    "coingecko-api": "^1.0.10",
+    "commander": "^5.0.0",
+    "get-user-locale": "^1.3.0",
+    "globalize": "^1.5.0",
+    "progress": "^2.0.3",
+    "table": "^5.4.6"
   }
 }
