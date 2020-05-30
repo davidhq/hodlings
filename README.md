@@ -2,7 +2,7 @@
 
 ⚠️ You need **node.js** `v13.8.0` or higher.
 
-Display value of crypto-currency hodlings. Prices fetched from [coingecko API](https://www.coingecko.com/en/api).
+Display value of crypto-currency hodlings.
 
 Sample output:
 
@@ -58,76 +58,32 @@ Specifying the entire portfolio is simple:
 # Hodlings
 BTC: 0.3123
 ETH: 14.99858897
-GNT: 148
+DFN: 200
+DAI: 148
 REP: 623
+...
 ```
 
-Just use token ticker symbols or (even better) the token ids because multiple tokens can have the same ticker :/
-
-Same file but using token ids:
-
-```
-# Hodlings
-bitcoin: 0.3123
-ethereum: 14.99858897
-golem-network-tokens: 148
-augur: 623
-```
-
-Read token ids from [CoinMarketCap API](https://api.coinmarketcap.com/v1/ticker?limit=0).
-
-**Tip:** it is much easier to read the json output in Chrome if you install the [JSONView Chrome extension](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc?hl=en) first. There are equivalent extensions for other browsers.
+Project is currently using [CoinGecko API](https://www.coingecko.com/en/api).
 
 ## Notes
 
 If you run `hodl` without this file present, it will create an example file for your convenience.
 
-To use a different hodlings file for portfolio check the `-f` option (basically just use `hodl -f ~/path_to/hodlings2`).
-
 ## Complete options
 ```
   Usage: hodl [options]
 
-
   Options:
 
-    -w, --watch               refresh data periodically every 10 min
-    -f, --file <f>            file to use for hodlings [~/.hodlings]
     -x, --convert <currency>  currency to display (usd, eur, cny...)
-    --columns <columns>       columns to display
     --eth                     focus on eth, hide the bitcoin-specific columns (value-btc, 7-day-change-vs-btc)
     --btc                     focus on btc, hide the ethereum-specific columns (value-eth, 7-day-change-vs-eth)
-    --locale <locale>         locale to use for formatting [en]
-    --supported-currencies    shows list of supported currencies
-    --supported-locales       shows list of supported locales
-    --available-columns       shows list of columns
-    --no-color                don't display colors
     -h, --help                output usage information
 ```
 
 ## Updates and attribution
 
-**hodlings** is based on [crytrac](https://github.com/Talljoe/crytrac).
-
-Improvements over original project (I wrote this list in the beginning, there were more improvements later):
-
-* show percentage change vs USD since last run in addition to 1h, 24h and 7d changes
-* show 7d change vs ETH and BTC as well
-* show each hodling value in terms of ETH and BTC in addition to chosen fiat currency USD, EUR... (*-x* option)
-* coins in *~/.hodlings* file can be specified with ids (*basic-attention-token* instead of symbols, eg. *BAT*). Some coins were ambiguous (same symbol) which caused problems. Using ids is recommended.
-* all columns are shown by default because users mostly don't know how to turn them on before reading *--help* and besides mostly all columns are useful and nicely laid out
-* footer shows total value in ETH and BTC in addition to chosen fiat currency
-* footer shows ETH market cap percentage of total crypto market cap
-* footer shows the *flippening ratio*
-* add 24h volume (as percentage of bitcoin's volume) column
-* add rank column
-* copy *.hodlings-example* file to *~/.hodlings* on first run for easier onboarding
-* adjust a few colors in the portfolio table for a nicer look
-* remove broken export to csv feature and a few deprecated or unneeded config options
-
-I changed the project's repo/name because:
-
-* easy install over npm using a new package name
-* possible rewrite in regular JavaScript instead of LiveScript and further expansion of features so regular fork would not be suitable
+**hodlings** is thanking [crytrac](https://github.com/Talljoe/crytrac) project for initial idea.
 
 Thanx again to [Joe Wasson](http://talljoe.com) for a great project which persuaded with simplicity and nice look.
