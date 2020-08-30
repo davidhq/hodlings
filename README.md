@@ -76,7 +76,7 @@ If you run `hodl` without this file present, it will create an example file for 
 
   Options:
 
-    -x, --convert <currency>  currency to display (usd, eur, cny...)
+    -x, --convert <currency>  currency to display (usd, eur, cny, jpy...)
     --eth                     focus on eth, hide the bitcoin-specific columns (value-btc, 7-day-change-vs-btc)
     --btc                     focus on btc, hide the ethereum-specific columns (value-eth, 7-day-change-vs-eth)
     -h, --help                output usage information
