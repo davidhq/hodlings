@@ -1,5 +1,7 @@
 # ignored project files and folders
 data
+.deploy
+todo.txt
 
 # Logs
 logs
