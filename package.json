@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "hodl": "index.js",
-    "hodlings": "index.js"
+    "hodl": "hodlings.js",
+    "hodlings": "hodlings.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,6 +25,7 @@
   "author": "davidhq",
   "license": "MIT",
   "dependencies": {
+    "approximate-number": "^2.1.0",
     "chalk": "^4.0.0",
     "cldr-data": "^36.0.0",
     "coingecko-api": "^1.0.10",
