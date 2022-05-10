@@ -1,24 +1,27 @@
 #!/usr/bin/env node
-import chalk from 'chalk';
+import colors from 'chalk';
 import path from 'path';
 import { homedir } from 'os';
 import program from 'commander';
 import readPortfolio from './lib/readPortfolio.js';
 import getHodlings from './lib/getHodlings.js';
 import { formatValue } from './lib/helpers/helpers.js';
-import convert from './convert.js';
 import Table from './lib/table/table.js';
+
+import Gecko from './lib/marketData/coingecko/index.js';
+
+const gecko = new Gecko();
 
 function absolutizePath(path) {
   return path.replace(/^~/, homedir());
 }
 
 function convertHelp() {
-  console.log(chalk.yellow('Usage:'));
-  console.log(`${chalk.green('hodl --convert')} ${chalk.green('1000 usdc eth')}`);
-  console.log(`${chalk.green('hodl --convert')} ${chalk.green('2000 sol luna')}`);
-  console.log(`${chalk.green('hodl --convert')} ${chalk.green('1000 deus eur')}`);
-  console.log(`${chalk.gray('...')}`);
+  console.log(colors.yellow('Usage:'));
+  console.log(`${colors.green('hodl --convert')} ${colors.green('1000 usdc eth')}`);
+  console.log(`${colors.green('hodl --convert')} ${colors.green('2000 sol luna')}`);
+  console.log(`${colors.green('hodl --convert')} ${colors.green('1000 deus eur')}`);
+  console.log(`${colors.gray('...')}`);
 }
 
 // --convert
@@ -27,7 +30,7 @@ if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '-
   const args = process.argv.slice(3);
 
   if (args.length != 3) {
-    console.log(chalk.red('⚠️  Too few arguments'));
+    console.log(colors.red('⚠️  Too few arguments'));
     console.log();
     convertHelp();
   } else {
@@ -36,20 +39,24 @@ if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '-
     const coin2Name = args[2];
 
     if (Number.isNaN(parseFloat(amount))) {
-      console.log(chalk.red(`⚠️  Not a number: ${chalk.yellow(amount)}`));
+      console.log(colors.red(`⚠️  Not a number: ${colors.yellow(amount)}`));
       console.log();
       convertHelp();
     } else {
-      convert({ amount, coin1Name, coin2Name })
+      gecko
+        .convert({ amount, coin1Name, coin2Name })
         .then(({ coin1, coin2, result }) => {
           console.log(
-            `${chalk.yellow(amount)} ${chalk.cyan(coin1.symbol)} ${chalk.gray(`(${coin1.name})`)} = ${chalk.green(formatValue(result))} ${chalk.cyan(
+            `${colors.yellow(amount)} ${colors.cyan(coin1.symbol)} ${colors.gray(`(${coin1.name})`)} = ${colors.green(formatValue(result))} ${colors.cyan(
               coin2.symbol
-            )} ${chalk.gray(`(${coin2.name})`)}`
+            )} ${colors.gray(`(${coin2.name})`)}`
           );
         })
         .catch(e => {
-          console.log(chalk.red(e));
+          console.log();
+          console.log(colors.red('CoinGecko API is currently not working :('));
+          console.log();
+          console.log(colors.gray(e));
         });
     }
   }
@@ -71,8 +78,8 @@ if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '-
   const portfolio = readPortfolio(hodlingsPath);
 
   const isDefaultHodlingsPath = path.join(homedir(), '.hodlings') == hodlingsPath;
-  const portfolioPath = isDefaultHodlingsPath ? chalk.green(hodlingsPath) : chalk.magenta(hodlingsPath);
-  console.log(`${chalk.green('✓')} Read portfolio from ${portfolioPath} → ${chalk.cyan(portfolio.length)} coins`);
+  const portfolioPath = isDefaultHodlingsPath ? colors.green(hodlingsPath) : colors.magenta(hodlingsPath);
+  console.log(`${colors.green('✓')} Read portfolio from ${portfolioPath} → ${colors.cyan(portfolio.length)} coins`);
 
   getHodlings({ portfolio, baseCurrency, showProgress: true })
     .then(({ hodlings, problems }) => {
@@ -83,5 +90,11 @@ if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '-
       console.log();
       problems.forEach(problem => console.log(problem));
     })
-    .catch(console.log);
+    .catch(e => {
+      console.log(e);
+      console.log();
+      console.log(colors.red('CoinGecko API is currently not working :('));
+      console.log();
+      console.log(colors.gray(e));
+    });
 }

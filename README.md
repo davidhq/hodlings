@@ -58,9 +58,10 @@ Specifying the entire portfolio is simple:
 # Hodlings
 BTC: 0.3123
 ETH: 14.99858897
-DFN: 200
 DAI: 148
-REP: 623
+DEUS: 623
+SOL: 500
+LUNA: 1000
 ...
 ```
 
@@ -76,10 +77,11 @@ If you run `hodl` without this file present, it will create an example file for 
 
   Options:
 
-    -x, --convert <currency>  currency to display (usd, eur, cny, jpy...)
-    --eth                     focus on eth, hide the bitcoin-specific columns (value-btc, 7-day-change-vs-btc)
-    --btc                     focus on btc, hide the ethereum-specific columns (value-eth, 7-day-change-vs-eth)
-    -h, --help                output usage information
+    -x, --currency <currency>                 currency to display (usd, eur, cny, jpy...)
+    -c, --convert <amount> <token1> <token2>  convert between tokens
+    --eth                                     focus on eth, hide the bitcoin-specific columns (value-btc, 7-day-change-vs-btc)
+    --btc                                     focus on btc, hide the ethereum-specific columns (value-eth, 7-day-change-vs-eth)
+    -h, --help                                output usage information
 ```
 
 ## Updates and attribution
