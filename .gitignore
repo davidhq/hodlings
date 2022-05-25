@@ -2,6 +2,7 @@
 data
 .deploy
 .deployignore
+.deploy-theta
 todo.txt
 
 # Logs

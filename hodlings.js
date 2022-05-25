@@ -8,7 +8,7 @@ import getHodlings from './lib/getHodlings.js';
 import { formatValue } from './lib/helpers/helpers.js';
 import Table from './lib/table/table.js';
 
-import Gecko from './lib/marketData/coingecko/index.js';
+import Gecko from './lib/marketData/coingecko/gecko.js';
 
 const gecko = new Gecko();
 
@@ -45,18 +45,23 @@ if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '-
     } else {
       gecko
         .convert({ amount, coin1Name, coin2Name })
-        .then(({ coin1, coin2, result }) => {
+        // coin1 and coin2 are in the form: { symbol: '', name: ''}
+        // they don't include coingeckoId, we don't care about this here anymore
+        .then(({ coin1, coin1Fiat, coin1Commodity, coin2, coin2Fiat, coin2Commodity, result }) => {
+          const clr1 = coin1Fiat ? colors.white : coin1Commodity ? colors.yellow : colors.cyan;
+          const clr2 = coin2Fiat ? colors.white : coin2Commodity ? colors.yellow : colors.cyan;
+
           console.log(
-            `${colors.yellow(amount)} ${colors.cyan(coin1.symbol)} ${colors.gray(`(${coin1.name})`)} = ${colors.green(formatValue(result))} ${colors.cyan(
+            `${colors.yellow(amount)} ${clr1(coin1.symbol)} ${colors.gray(`(${coin1.name})`)} = ${colors.green(formatValue(result))} ${clr2(
               coin2.symbol
             )} ${colors.gray(`(${coin2.name})`)}`
           );
         })
         .catch(e => {
-          console.log();
-          console.log(colors.red('CoinGecko API is currently not working :('));
-          console.log();
-          console.log(colors.gray(e));
+          //console.log();
+          //console.log(colors.red('CoinGecko API is currently not working :('));
+          //console.log();
+          console.log(colors.red(e));
         });
     }
   }
