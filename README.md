@@ -8,10 +8,6 @@ Sample output:
 
 ![Sample Output](img/output.png)
 
-Design:
-
-![Design](img/design.png)
-
 ## Prerequisites
 
 **Summary:** `node.js` and `git`. You can skip to the next section if you already have these.
@@ -45,6 +41,16 @@ Try `hodl -h` for complete list and here are a few examples:
 ``hodl -x cny``
 
 Add `--eth` to focus on **Ethereum** or `--btc` to focus on **Bitcoin** and save space for two unneeded columns.
+
+### Converter
+
+``hodl --convert 2 eth usd``
+
+``hodl --convert 20 deus dei``
+
+``hodl --convert 20 dei usdc``
+
+etc.
 
 ## Configure
 
