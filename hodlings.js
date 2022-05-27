@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import colors from 'chalk';
+import colors from 'kleur';
 import path from 'path';
 import { homedir } from 'os';
 import program from 'commander';
