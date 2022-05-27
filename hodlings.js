@@ -29,14 +29,19 @@ function convertHelp() {
 if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '--convert')) {
   const args = process.argv.slice(3);
 
-  if (args.length != 3) {
-    console.log(colors.red('⚠️  Too few arguments'));
+  if (![2, 3].includes(args.length)) {
+    console.log(colors.red('⚠️  Wrong number of arguments'));
     console.log();
     convertHelp();
   } else {
-    const amount = args[0];
-    const coin1Name = args[1];
-    const coin2Name = args[2];
+    // if there is two arguments:
+    // hodl --convert eth usd
+    // we assume this:
+    // hodl --convert 1 eth usd
+    // so number 1 is implied
+    const amount = args.length == 3 ? args[0] : 1;
+    const coin1Name = args.length == 3 ? args[1] : args[0];
+    const coin2Name = args.length == 3 ? args[2] : args[1];
 
     if (Number.isNaN(parseFloat(amount))) {
       console.log(colors.red(`⚠️  Not a number: ${colors.yellow(amount)}`));
