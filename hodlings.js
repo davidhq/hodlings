@@ -29,7 +29,7 @@ function convertHelp() {
 if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '--convert')) {
   const args = process.argv.slice(3);
 
-  if (![2, 3].includes(args.length)) {
+  if (![1, 2, 3].includes(args.length)) {
     console.log(colors.red('⚠️  Wrong number of arguments'));
     console.log();
     convertHelp();
@@ -39,9 +39,36 @@ if (process.argv.length > 2 && (process.argv[2] == '-c' || process.argv[2] == '-
     // we assume this:
     // hodl --convert 1 eth usd
     // so number 1 is implied
-    const amount = args.length == 3 ? args[0] : 1;
-    const coin1Name = args.length == 3 ? args[1] : args[0];
-    const coin2Name = args.length == 3 ? args[2] : args[1];
+    let amount;
+    let coin1Name;
+    let coin2Name;
+
+    if (args.length == 3) {
+      [amount, coin1Name, coin2Name] = args;
+      // amount = args[0];
+      // coin1Name = args[1];
+      // coin2Name = args[2];
+    } else if (args.length == 2) {
+      if (!Number.isNaN(parseFloat(args[0]))) {
+        [amount, coin1Name] = args;
+        // amount = args[0];
+        // coin1Name = args[1];
+        coin2Name = 'usd';
+      } else {
+        amount = 1;
+        [coin1Name, coin2Name] = args;
+        // coin1Name = args[0];
+        // coin2Name = args[1];
+      }
+    } else {
+      amount = 1;
+      coin1Name = args[0];
+      coin2Name = 'usd';
+    }
+
+    // const amount = args.length == 3 ? args[0] : 1;
+    // const coin1Name = args.length == 3 ? args[1] : args[0];
+    // const coin2Name = args.length == 3 ? args[2] : args[1];
 
     if (Number.isNaN(parseFloat(amount))) {
       console.log(colors.red(`⚠️  Not a number: ${colors.yellow(amount)}`));
